@@ -54,11 +54,11 @@ impl GeneratePassword {
     fn encrypt(&mut self) -> Result<String, String> {
         let mc = new_magic_crypt!("killer_queen", 256);
         let hash = mc.encrypt_str_to_base64(&self.password);
-
-        match hash.as_str() {
-            "" => Err("An error occurred while encrypting".to_owned()),
-            _ => Ok("encrypted".to_owned()),
+        if let "" = hash.as_str() {
+            return Err("An error occurred while encrypting".to_owned());
         }
+        self.password = hash;
+        Ok("encrypted".to_owned())
     }
 
     pub fn decrypt(password: String) -> String {

@@ -30,7 +30,7 @@ impl Args {
         match self.arguments.index(1).to_lowercase().as_str() {
             "add" => Add::new(self.clone()).run(connection),
             "show" => {}
-            "list" => list::lists_password(),
+            "list" => list::lists_password(connection),
             "--help" | "help" => help::show(),
             _ => {}
         };
