@@ -3,9 +3,8 @@ use std::{
     ops::Index,
 };
 
+use super::{add::Add, list};
 use crate::help;
-
-use super::add;
 
 #[derive(Default, Clone)]
 
@@ -15,27 +14,32 @@ pub struct Args {
 }
 
 impl Args {
-    pub fn new() {
-        let mut obj: Args = Args::default();
-        obj.get_arguments();
-        obj.run();
+    pub fn new() -> Self {
+        let items = Args::get_arguments();
+        Self {
+            arguments: items.0,
+            len: items.1,
+        }
     }
 
-    pub fn get_arguments(&mut self) {
-        self.arguments = std::env::args().collect();
-        self.len = self.arguments.len() - 1;
-    }
-
-    pub fn run(&mut self) {
+    pub fn run(&mut self, connection: &sqlite::Connection) {
         if self.len == 0 {
             return help::show();
         }
+
         match self.arguments.index(1).to_lowercase().as_str() {
-            "add" => return add::Add::new(self.clone()),
+            "add" => Add::new(self.clone()).run(connection),
             "show" => {}
-            "--help" | "help" => return help::show(),
+            "list" => list::lists_password(),
+            "--help" | "help" => help::show(),
             _ => {}
-        }
+        };
+    }
+
+    fn get_arguments() -> (Vec<String>, usize) {
+        let vec: Vec<String> = std::env::args().collect();
+        let len = vec.len() - 1;
+        return (vec, len);
     }
 
     pub fn get_from_console(&mut self, print_line: &str) {

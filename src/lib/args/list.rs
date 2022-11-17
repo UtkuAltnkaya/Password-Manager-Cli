@@ -1,13 +1,14 @@
-use super::args::Args;
+use colored::Colorize;
 
-pub struct List {
-    arguments: Args,
-}
+use crate::generate_password;
 
-impl List {
-    pub fn new(arguments: Args) {
-        Self { arguments };
-    }
+pub fn lists_password() {
+    //connect to db
+    println!("{} {:<15}", "Name".yellow(), "Password".yellow());
+    // let obj = add::Add::new(self.arguments.clone());
 
-    fn lists_password() {}
+    let mut obj = generate_password::GeneratePassword::new("Amazon".to_owned(), 32);
+    obj.generate_password().unwrap();
+
+    println!("{} {:<15}", "Amazon", obj.get_password());
 }

@@ -1,5 +1,8 @@
-use password_manager::args::args::Args;
+use password_manager::{args::args::Args, db::db::DbConnection};
 
 fn main() {
-    Args::new();
+    let db = DbConnection::new("src/table.db");
+    let connection = db.get_connection();
+    let mut args = Args::new();
+    args.run(connection);
 }

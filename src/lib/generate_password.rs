@@ -54,6 +54,7 @@ impl GeneratePassword {
     fn encrypt(&mut self) -> Result<String, String> {
         let mc = new_magic_crypt!("killer_queen", 256);
         let hash = mc.encrypt_str_to_base64(&self.password);
+
         match hash.as_str() {
             "" => Err("An error occurred while encrypting".to_owned()),
             _ => Ok("encrypted".to_owned()),
@@ -65,8 +66,8 @@ impl GeneratePassword {
         mc.decrypt_base64_to_string(password).unwrap()
     }
 
-    pub fn get_password(&self) -> String {
-        self.password.clone()
+    pub fn get_password(&self) -> &String {
+        &self.password
     }
 
     pub fn set_password_name(&mut self, password_name: String) {

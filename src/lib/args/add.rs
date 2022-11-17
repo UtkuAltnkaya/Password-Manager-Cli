@@ -1,17 +1,17 @@
 use super::args::Args;
-use crate::generate_password::GeneratePassword;
+use crate::{db::password, generate_password::GeneratePassword};
 use colored::Colorize;
 
-#[derive(Default)]
 pub struct Add {
     arguments: Args,
 }
 
 impl Add {
-    pub fn new(arguments: Args) {
-        Self { arguments }.add_password();
+    pub fn new(arguments: Args) -> Self {
+        Self { arguments }
     }
-    pub fn add_password(&mut self) {
+
+    pub fn run(&mut self, connection: &sqlite::Connection) {
         if self.arguments.get_len() == 1 {
             self.arguments
                 .get_from_console("Enter password name to add:");
@@ -19,15 +19,29 @@ impl Add {
         if self.check_second_arg() {
             return;
         };
-        self.run(self.arguments.arguments(2), self.check_third_args());
+        self.add_password(
+            self.arguments.arguments(2),
+            self.check_third_args(),
+            connection,
+        );
     }
 
-    fn run(&self, second_argument: String, size: usize) {
-        match GeneratePassword::new(second_argument, size).generate_password() {
-            Ok(result) => println!("{}", result.green()),
+    fn add_password(&self, second_argument: String, size: usize, connection: &sqlite::Connection) {
+        let mut gn_pass = GeneratePassword::new(second_argument.clone(), size);
+        match gn_pass.generate_password() {
+            Ok(result) => {
+                password::add_password_to_db(
+                    connection,
+                    second_argument,
+                    gn_pass.get_password().to_string(),
+                )
+                .unwrap();
+                println!("{}", result.green())
+            }
             Err(error) => panic!("{}", error.red()),
         };
     }
+
     fn check_second_arg(&self) -> bool {
         match self.arguments.arguments(2).as_str() {
             "--help" => {
@@ -35,10 +49,7 @@ impl Add {
                 return true;
             }
             "-e" | "--example" => {
-                self.add_help();
-                println!("{}", "Example:".yellow());
-                print!(" pm.exe {} {} ", "add".yellow(), "Google".green());
-                print!("{} {}\n", "-s".yellow(), "32".green());
+                self.add_example();
                 return true;
             }
             _ => {
@@ -76,8 +87,15 @@ impl Add {
             "-s  --size".green()
         );
         println!(
-            " {:<15} Example for adding password",
+            " {:<15} Example for adding password\n",
             "-e  --example".green()
         );
+    }
+
+    fn add_example(&self) {
+        self.add_help();
+        println!("{}", "EXAMPLE:".yellow());
+        print!(" pm.exe {} {} ", "add".yellow(), "Google".green());
+        print!("{} {}\n", "-s".yellow(), "32".green());
     }
 }
