@@ -43,19 +43,19 @@ impl Add {
     }
 
     fn check_second_arg(&self) -> bool {
-        match self.arguments.arguments(2).as_str() {
-            "--help" => {
-                self.add_help();
-                return true;
-            }
-            "-e" | "--example" => {
-                self.add_example();
-                return true;
-            }
-            _ => {
-                return false;
-            }
+        let arg = self.arguments.arguments(2);
+        if arg == "--help" || arg == "-h" {
+            self.add_help();
+            return true;
         }
+        if arg == "-e" || arg == "--example" {
+            self.add_example();
+            return true;
+        }
+        if arg.starts_with("-") || arg.starts_with("--") {
+            return true;
+        }
+        return false;
     }
 
     fn check_third_args(&self) -> usize {
