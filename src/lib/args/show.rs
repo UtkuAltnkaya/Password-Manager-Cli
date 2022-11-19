@@ -4,6 +4,7 @@ use crate::{
     helpers,
     models::{args, password::Password},
     password::db_password,
+    print,
 };
 
 use super::args::Args;
@@ -13,10 +14,6 @@ pub struct Show {
 }
 
 impl Show {
-    pub fn new(arguments: Args) -> Self {
-        Self { arguments }
-    }
-
     fn show_password(&self, connection: &sqlite::Connection) {
         let result =
             db_password::get_one_password(self.arguments.arguments(2).unwrap(), connection);
@@ -51,6 +48,10 @@ impl Show {
 }
 
 impl args::Arguments for Show {
+    fn new(arguments: Args) -> Self {
+        Self { arguments }
+    }
+
     fn run(&mut self, connection: &sqlite::Connection) {
         if self.arguments.get_len() == 1 {
             self.arguments.get_from_console("Enter password to show:");
@@ -74,10 +75,10 @@ impl args::Arguments for Show {
     }
 
     fn help(&self) {
-        todo!()
+        print::show::print_show_help()
     }
 
     fn example(&self) {
-        todo!()
+        print::show::print_show_example();
     }
 }

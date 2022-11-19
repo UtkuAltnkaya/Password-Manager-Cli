@@ -5,6 +5,7 @@ use crate::{
         password::Password,
     },
     password::db_password,
+    print,
 };
 use colored::Colorize;
 
@@ -13,10 +14,6 @@ pub struct Add {
 }
 
 impl Add {
-    pub fn new(arguments: Args) -> Self {
-        Self { arguments }
-    }
-
     fn add_password(&self, second_argument: String, size: usize, connection: &sqlite::Connection) {
         let mut gn_pass = Password::new(second_argument.clone(), size);
         match gn_pass.generate_password() {
@@ -49,6 +46,9 @@ impl Add {
 }
 
 impl args::Arguments for Add {
+    fn new(arguments: Args) -> Self {
+        Self { arguments }
+    }
     fn run(&mut self, connection: &sqlite::Connection) {
         if self.arguments.get_len() == 1 {
             self.arguments
@@ -77,32 +77,11 @@ impl args::Arguments for Add {
         return false;
     }
     fn help(&self) {
-        println!(
-            "{}\n pm.exe add {} [--] {}\n",
-            "USAGE:".yellow(),
-            "[OPTIONS]".green(),
-            "[args]",
-        );
-        println!(
-            "{}\n {: <15} Enter site to add password\n",
-            "OPTIONS:".yellow(),
-            "[SITE-NAME]".green()
-        );
-        println!(
-            "{}\n {:<15} Specify size of password (Multiples of 4 and 4, up to 128)",
-            "ARGS:".yellow(),
-            "-s  --size".green()
-        );
-        println!(
-            " {:<15} Example for adding password\n",
-            "-e  --example".green()
-        );
+        print::add::print_add_help();
     }
 
     fn example(&self) {
         self.help();
-        println!("{}", "EXAMPLE:".yellow());
-        print!(" pm.exe {} {} ", "add".yellow(), "Google".green());
-        print!("{} {}\n", "-s".yellow(), "32".green());
+        print::add::print_add_example();
     }
 }

@@ -1,7 +1,7 @@
 use std::ops::Index;
 
 use super::{add::Add, list, show::Show};
-use crate::{help, helpers, models::args::Arguments};
+use crate::{helpers, models::args::Arguments, print};
 
 #[derive(Default, Clone)]
 pub struct Args {
@@ -20,13 +20,13 @@ impl Args {
     // pub fn run(&mut self, connection: &sqlite::Connection) {}
     pub fn run(self, connection: &sqlite::Connection) {
         if self.len == 0 {
-            return help::show();
+            return print::help::show();
         }
         match self.arguments(1).unwrap().as_str() {
             "add" => Add::new(self.clone()).run(connection),
             "show" => Show::new(self.clone()).run(connection),
             "list" => list::lists_password(connection),
-            "--help" | "help" => help::show(),
+            "--help" | "help" => print::help::show(),
             _ => {}
         };
     }
@@ -60,5 +60,5 @@ impl Args {
 fn get_arguments_from_user() -> (Vec<String>, usize) {
     let vec: Vec<String> = std::env::args().collect();
     let len = vec.len() - 1;
-    return (vec, len);
+    (vec, len)
 }
