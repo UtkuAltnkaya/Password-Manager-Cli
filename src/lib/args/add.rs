@@ -20,7 +20,7 @@ impl Add {
             return;
         };
         self.add_password(
-            self.arguments.arguments(2),
+            self.arguments.arguments(2).unwrap(),
             self.check_third_args(),
             connection,
         );
@@ -30,21 +30,25 @@ impl Add {
         let mut gn_pass = GeneratePassword::new(second_argument.clone(), size);
         match gn_pass.generate_password() {
             Ok(result) => {
-                password::add_password_to_db(
+                let db_result = password::add_password_to_db(
                     connection,
                     second_argument,
                     gn_pass.get_password().to_string(),
-                )
-                .unwrap();
+                );
+
+                if let Err(error) = &db_result {
+                    return println!("{}", error.red());
+                }
+
                 println!("{}", result.green())
             }
-            Err(error) => panic!("{}", error.red()),
+            Err(error) => println!("{}", error.red()),
         };
     }
 
     fn check_second_arg(&self) -> bool {
-        let arg = self.arguments.arguments(2);
-        if arg == "--help" || arg == "-h" {
+        let arg = self.arguments.arguments(2).unwrap();
+        if arg == "--help" || arg == "-h" || arg == "-help" {
             self.add_help();
             return true;
         }
@@ -52,19 +56,17 @@ impl Add {
             self.add_example();
             return true;
         }
-        if arg.starts_with("-") || arg.starts_with("--") {
-            return true;
-        }
         return false;
     }
 
     fn check_third_args(&self) -> usize {
         let mut size: usize = 32;
-        if self.arguments.get_len() == 4 {
-            let third_arguments = self.arguments.arguments(3);
-            if third_arguments == "-s" || third_arguments == "--size" {
-                size = self.arguments.arguments(4).parse().unwrap();
-            }
+        if self.arguments.get_len() != 4 {
+            return size;
+        }
+        let third_arguments = self.arguments.arguments(3).unwrap();
+        if third_arguments == "-s" || third_arguments == "--size" {
+            size = self.arguments.arguments(4).unwrap().parse().unwrap();
         }
         return size;
     }

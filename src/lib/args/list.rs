@@ -9,5 +9,6 @@ pub fn lists_password(connection: &sqlite::Connection) {
         "Name".yellow(),
         "Password".yellow()
     );
-    password::list_all_passwords(connection)
+    //password::list_all_passwords(connection)
+    password::get_one_password("g".to_owned(), connection)
 }
