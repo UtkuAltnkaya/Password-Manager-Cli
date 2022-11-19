@@ -1,20 +1,9 @@
 use magic_crypt::{new_magic_crypt, MagicCryptTrait};
 use rand::Rng;
 
-pub struct GeneratePassword {
-    password_name: String,
-    password: String,
-    len: usize,
-}
+use crate::models::password::Password;
 
-impl GeneratePassword {
-    pub fn new(password_name: String, size: usize) -> Self {
-        Self {
-            password_name: password_name,
-            password: "".to_owned(),
-            len: size,
-        }
-    }
+impl Password {
     pub fn generate_password(&mut self) -> Result<String, String> {
         let items = [
             "qwertyuiopasdfghjklzxcvbnm",
@@ -61,16 +50,8 @@ impl GeneratePassword {
         Ok("encrypted".to_owned())
     }
 
-    pub fn decrypt(password: String) -> String {
+    pub fn decrypt(&mut self) {
         let mc = new_magic_crypt!("killer_queen", 256);
-        mc.decrypt_base64_to_string(password).unwrap()
-    }
-
-    pub fn get_password(&self) -> &String {
-        &self.password
-    }
-
-    pub fn set_password_name(&mut self, password_name: String) {
-        self.password_name = password_name;
+        self.password = mc.decrypt_base64_to_string(&self.password).unwrap();
     }
 }

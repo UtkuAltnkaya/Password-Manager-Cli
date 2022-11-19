@@ -1,5 +1,11 @@
 use super::args::Args;
-use crate::{db::password, generate_password::GeneratePassword};
+use crate::{
+    models::{
+        args::{self},
+        password::Password,
+    },
+    password::db_password,
+};
 use colored::Colorize;
 
 pub struct Add {
@@ -11,7 +17,39 @@ impl Add {
         Self { arguments }
     }
 
-    pub fn run(&mut self, connection: &sqlite::Connection) {
+    fn add_password(&self, second_argument: String, size: usize, connection: &sqlite::Connection) {
+        let mut gn_pass = Password::new(second_argument.clone(), size);
+        match gn_pass.generate_password() {
+            Ok(result) => {
+                let db_result = db_password::add_password_to_db(
+                    connection,
+                    second_argument,
+                    gn_pass.get_password().to_string(),
+                );
+                if let Err(error) = &db_result {
+                    return println!("{}", error.red());
+                }
+                println!("{}", result.green())
+            }
+            Err(error) => println!("{}", error.red()),
+        };
+    }
+
+    fn check_third_args(&self) -> usize {
+        let mut size: usize = 32;
+        if self.arguments.get_len() != 4 {
+            return size;
+        }
+        let third_arguments = self.arguments.arguments(3).unwrap();
+        if third_arguments == "-s" || third_arguments == "--size" {
+            size = self.arguments.arguments(4).unwrap().parse().unwrap();
+        }
+        return size;
+    }
+}
+
+impl args::Arguments for Add {
+    fn run(&mut self, connection: &sqlite::Connection) {
         if self.arguments.get_len() == 1 {
             self.arguments
                 .get_from_console("Enter password name to add:");
@@ -26,52 +64,19 @@ impl Add {
         );
     }
 
-    fn add_password(&self, second_argument: String, size: usize, connection: &sqlite::Connection) {
-        let mut gn_pass = GeneratePassword::new(second_argument.clone(), size);
-        match gn_pass.generate_password() {
-            Ok(result) => {
-                let db_result = password::add_password_to_db(
-                    connection,
-                    second_argument,
-                    gn_pass.get_password().to_string(),
-                );
-
-                if let Err(error) = &db_result {
-                    return println!("{}", error.red());
-                }
-
-                println!("{}", result.green())
-            }
-            Err(error) => println!("{}", error.red()),
-        };
-    }
-
     fn check_second_arg(&self) -> bool {
         let arg = self.arguments.arguments(2).unwrap();
         if arg == "--help" || arg == "-h" || arg == "-help" {
-            self.add_help();
+            self.help();
             return true;
         }
         if arg == "-e" || arg == "--example" {
-            self.add_example();
+            self.example();
             return true;
         }
         return false;
     }
-
-    fn check_third_args(&self) -> usize {
-        let mut size: usize = 32;
-        if self.arguments.get_len() != 4 {
-            return size;
-        }
-        let third_arguments = self.arguments.arguments(3).unwrap();
-        if third_arguments == "-s" || third_arguments == "--size" {
-            size = self.arguments.arguments(4).unwrap().parse().unwrap();
-        }
-        return size;
-    }
-
-    fn add_help(&self) {
+    fn help(&self) {
         println!(
             "{}\n pm.exe add {} [--] {}\n",
             "USAGE:".yellow(),
@@ -94,8 +99,8 @@ impl Add {
         );
     }
 
-    fn add_example(&self) {
-        self.add_help();
+    fn example(&self) {
+        self.help();
         println!("{}", "EXAMPLE:".yellow());
         print!(" pm.exe {} {} ", "add".yellow(), "Google".green());
         print!("{} {}\n", "-s".yellow(), "32".green());

@@ -1,4 +1,6 @@
 pub mod args;
 pub mod db;
-pub mod generate_password;
 pub mod help;
+pub mod helpers;
+pub mod models;
+pub mod password;

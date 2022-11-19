@@ -1,6 +1,6 @@
 use colored::Colorize;
 
-use crate::db::password;
+use crate::password::db_password;
 
 pub fn lists_password(connection: &sqlite::Connection) {
     println!(
@@ -9,6 +9,5 @@ pub fn lists_password(connection: &sqlite::Connection) {
         "Name".yellow(),
         "Password".yellow()
     );
-    //password::list_all_passwords(connection)
-    password::get_one_password("g".to_owned(), connection)
+    db_password::list_all_passwords(connection)
 }

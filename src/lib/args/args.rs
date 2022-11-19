@@ -1,13 +1,9 @@
-use std::{
-    io::{self, Write},
-    ops::Index,
-};
+use std::ops::Index;
 
-use super::{add::Add, list};
-use crate::help;
+use super::{add::Add, list, show::Show};
+use crate::{help, helpers, models::args::Arguments};
 
 #[derive(Default, Clone)]
-
 pub struct Args {
     arguments: Vec<String>,
     len: usize,
@@ -22,13 +18,13 @@ impl Args {
         }
     }
     // pub fn run(&mut self, connection: &sqlite::Connection) {}
-    pub fn run(&mut self, connection: &sqlite::Connection) {
+    pub fn run(self, connection: &sqlite::Connection) {
         if self.len == 0 {
             return help::show();
         }
         match self.arguments(1).unwrap().as_str() {
             "add" => Add::new(self.clone()).run(connection),
-            "show" => {}
+            "show" => Show::new(self.clone()).run(connection),
             "list" => list::lists_password(connection),
             "--help" | "help" => help::show(),
             _ => {}
@@ -36,12 +32,8 @@ impl Args {
     }
 
     pub fn get_from_console(&mut self, print_line: &str) {
-        let mut line: String = String::new();
-        print!("{}", print_line);
-        io::stdout().flush().unwrap();
-        io::stdin().read_line(&mut line).unwrap();
+        let line = helpers::input_and_output(print_line);
         self.insert_arguments(2, line).unwrap();
-        self.len += 1;
     }
 
     pub fn arguments(&self, index: usize) -> Result<String, String> {
@@ -52,10 +44,11 @@ impl Args {
     }
 
     pub fn insert_arguments(&mut self, index: usize, element: String) -> Result<(), String> {
-        if index > self.len {
-            return Err("Out of range".to_owned());
+        if element == "" {
+            return Err("Invalid item".to_owned());
         }
         self.arguments.insert(index, element);
+        self.len += 1;
         Ok(())
     }
 

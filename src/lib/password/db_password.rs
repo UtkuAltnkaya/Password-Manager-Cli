@@ -1,5 +1,6 @@
-use colored::Colorize;
 use sqlite::State;
+
+use crate::models::password::Password;
 
 pub fn add_password_to_db(
     connection: &sqlite::Connection,
@@ -15,12 +16,11 @@ pub fn add_password_to_db(
         .unwrap()
         .bind((2, password.as_str()))
         .unwrap()
-        .next()
-        .unwrap();
+        .next();
 
     match result {
-        Ok(_) => Ok(()),
-        Err(_) => Err(format!("{} is is already added", name)),
+        Some(_) => Err(format!("{} is is already added try different name", name)),
+        None => Ok(()),
     }
 }
 
@@ -37,28 +37,27 @@ pub fn list_all_passwords(connection: &sqlite::Connection) {
         .unwrap();
 }
 
-pub fn get_one_password(password_name: String, connection: &sqlite::Connection) {
+pub fn get_one_password(
+    password_name: String,
+    connection: &sqlite::Connection,
+) -> Result<Password, String> {
     let query = format!("SELECT * FROM PASSWORDS WHERE NAME = ?");
     let mut statement = connection.prepare(query).unwrap();
     statement.bind((1, password_name.as_str())).unwrap();
-
     let mut flag: u8 = 0;
-    let mut password = String::new();
+    let mut password_obj: Password = Password::new(password_name, 32);
     while let Ok(State::Row) = statement.next() {
         flag += 1;
         if flag == 2 {
             break;
         }
-        println!(
-            "{:<15} {:<15} {:<15}",
-            statement.read::<i64, _>("Id").unwrap(),
-            statement.read::<String, _>("Name").unwrap(),
-            "********"
-        );
-        password = statement.read::<String, _>("Password").unwrap();
+        let password = statement.read::<String, _>("Password").unwrap();
+        password_obj.set_password(password.clone());
+        password_obj.set_len(password.len());
     }
+
     if flag == 0 {
-        return println!("{}", "Password not found".red());
+        return Err("Password not found".to_owned());
     }
-    println!("{}", password);
+    Ok(password_obj)
 }
