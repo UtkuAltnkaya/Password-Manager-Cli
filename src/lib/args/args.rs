@@ -1,7 +1,11 @@
 use std::ops::Index;
 
 use super::{add::Add, list, show::Show};
-use crate::{helpers, models::args::Arguments, print};
+use crate::{
+    helpers,
+    models::{args::Arguments, menu::Menu},
+    print,
+};
 
 #[derive(Default, Clone)]
 pub struct Args {
@@ -17,16 +21,15 @@ impl Args {
             len: items.1,
         }
     }
-
     pub fn run(self, connection: &sqlite::Connection) {
         if self.len == 0 {
-            return print::help::show();
+            return Menu::new().run(connection);
         }
         match self.arguments(1).unwrap().as_str() {
             "add" => Add::new(self.clone()).run(connection),
             "show" => Show::new(self.clone()).run(connection),
             "list" | "ls" => list::lists_password(connection),
-            "--help" | "help" => print::help::show(),
+            "--help" | "help" => print::help::display_help(),
             _ => {}
         };
     }

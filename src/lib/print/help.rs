@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use console::style;
 
-pub fn show() {
+pub fn display_help() {
     println!(
         "{} {}\nCli for managing passwords\n",
         style("Password Manager").yellow(),
