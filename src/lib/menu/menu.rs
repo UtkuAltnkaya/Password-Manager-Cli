@@ -1,7 +1,16 @@
-use console::{style, Key, Term};
+use std::io::stdout;
+
+use crossterm::{
+    cursor::MoveTo,
+    event::{read, Event, KeyCode},
+    execute,
+    style::Color,
+    terminal::{Clear, ClearType},
+};
 
 use crate::{
     args::{add::Add, args::Args, list, show::Show},
+    helpers,
     models::{args::Arguments, menu::Menu},
     print,
 };
@@ -23,18 +32,21 @@ impl Menu {
     }
 
     pub fn run(&mut self, connection: &sqlite::Connection) {
-        let terminal = Term::stdout();
-        let mut key = Key::ArrowUp;
+        execute!(stdout(), MoveTo(0, 0), Clear(ClearType::FromCursorDown)).unwrap();
+        self.show_menu_items();
         loop {
-            terminal.clear_screen().unwrap();
-            match key {
-                Key::ArrowUp => self.key_up(),
-                Key::ArrowDown => self.key_down(),
-                Key::Escape => return,
-                Key::Enter => return self.run_menu_item(connection),
-                _ => self.show_menu_items(),
+            let event = read().unwrap();
+            if let Event::Key(keys) = event {
+                execute!(stdout(), MoveTo(0, 0), Clear(ClearType::FromCursorDown)).unwrap();
+
+                match keys.code {
+                    KeyCode::Up => self.key_up(),
+                    KeyCode::Down => self.key_down(),
+                    KeyCode::Esc => return,
+                    KeyCode::Enter => return self.run_menu_item(connection),
+                    _ => self.show_menu_items(),
+                }
             }
-            key = terminal.read_key().unwrap();
         }
     }
 
@@ -80,13 +92,17 @@ impl Menu {
     }
 
     fn show_menu_items(&self) {
-        println!(
-            "{}",
-            style("--------------Menu--------------").bold().yellow()
+        helpers::print_with_color_and_bold_line(
+            Color::Yellow,
+            "--------------Menu--------------".to_owned(),
         );
+
         for (i, item) in self.menu_items.iter().enumerate() {
             if i == self.index {
-                println!("➜ {}", style(item).bold().blue());
+                helpers::print_with_color_and_bold_line(
+                    Color::Blue,
+                    format!("➜ {}", item).to_owned(),
+                );
                 continue;
             }
             println!("  {}", item);

@@ -1,5 +1,7 @@
 use std::ops::Index;
 
+use crossterm::style::Color;
+
 use super::{add::Add, list, show::Show};
 use crate::{
     helpers,
@@ -35,7 +37,7 @@ impl Args {
     }
 
     pub fn get_from_console(&mut self, print_line: &str) {
-        let line = helpers::input_and_output(print_line);
+        let line = helpers::input_and_output(Color::Grey, print_line);
         self.insert_arguments(2, line).unwrap();
     }
 

@@ -1,13 +1,12 @@
-use console::style;
+use crossterm::style::Color;
 
-use crate::password::db_password;
+use crate::{helpers, password::db_password};
 
 pub fn lists_password(connection: &sqlite::Connection) {
-    println!(
-        "{:<15} {:<15} {:<15}",
-        style("Id").yellow(),
-        style("Name").yellow(),
-        style("Password").yellow()
+    helpers::print_with_color_line(
+        Color::Yellow,
+        format!("{:<15} {:<15} {:<15}", "Id", "Name", "Password"),
     );
+
     db_password::list_all_passwords(connection)
 }

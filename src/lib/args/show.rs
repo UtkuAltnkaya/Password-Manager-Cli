@@ -1,5 +1,5 @@
 use cli_clipboard::{ClipboardContext, ClipboardProvider};
-use console::style;
+use crossterm::style::Color;
 
 use crate::{
     helpers,
@@ -24,16 +24,14 @@ impl Show {
                 self.result(&mut password);
                 self.check_third_args(&password);
             }
-            Err(error) => println!("{}", style(error).red()),
+            Err(error) => helpers::print_with_color(Color::Red, error),
         }
     }
 
     fn result(&self, password: &mut Password) {
-        println!(
-            "{:<15} {:<15} {:<15}",
-            style("Id").yellow(),
-            style("Name").yellow(),
-            style("Password").yellow(),
+        helpers::print_with_color_line(
+            Color::Yellow,
+            format!("{:<15} {:<15} {:<15}", "Id", "Name", "Password").to_owned(),
         );
         println!(
             "{:<15} {:<15} {:<15}\n",
@@ -43,17 +41,11 @@ impl Show {
         );
         password.decrypt();
 
-        let input = helpers::input_and_output(
-            style("To see password press (y):")
-                .blue()
-                .bold()
-                .to_string()
-                .as_str(),
-        );
+        let input = helpers::input_and_output(Color::Blue, "To see password press (y):");
         if input.to_lowercase() != "y" {
             return;
         }
-        println!("{}", style(password.get_password()).bold().green());
+        helpers::print_with_color_and_bold_line(Color::Green, password.get_password().to_owned());
     }
 
     fn check_third_args(&mut self, password: &Password) {
@@ -63,16 +55,17 @@ impl Show {
                 if result == "-c" || result == "--copy" {
                     let mut ctx = ClipboardContext::new().unwrap();
                     ctx.set_contents(password.password.to_owned()).unwrap();
-                    println!("{}", style("Password copied to clipboard").bold().green())
+
+                    helpers::print_with_color_and_bold_line(
+                        Color::Green,
+                        String::from("Password copied to clipboard"),
+                    );
                 }
             }
             Err(_) => {
                 let input = helpers::input_and_output(
-                    style("To copy password to clipboard press (y):")
-                        .blue()
-                        .bold()
-                        .to_string()
-                        .as_str(),
+                    Color::Blue,
+                    "To copy password to clipboard press (y):",
                 );
                 if input.to_lowercase() == "y" {
                     self.arguments

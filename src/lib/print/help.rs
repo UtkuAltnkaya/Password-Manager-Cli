@@ -1,27 +1,33 @@
 use std::collections::BTreeMap;
 
-use console::style;
+use crossterm::style::Color;
+
+use crate::helpers;
 
 pub fn display_help() {
-    println!(
-        "{} {}\nCli for managing passwords\n",
-        style("Password Manager").yellow(),
-        style("0.1.0").green()
-    );
-    println!(
-        "{}\n {} <SUBCOMMAND> <SUBCOMMAND>\n",
-        style("USAGE:").yellow(),
-        "pm.exe",
-    );
-    println!(
-        "{}\n {: <15} Print help information\n {:<15} Print version information\n",
-        style("OPTIONS:").yellow(),
-        style("-h, --help").green(),
-        style("-v, --version").green(),
-    );
-    println!("{}", style("SUBCOMMAND:").yellow());
+    //Title
+    helpers::print_with_color_and_bold(Color::Yellow, String::from("Password Manager "));
+    helpers::print_with_color_and_bold_line(Color::Green, String::from("0.1.0"));
+    println!("Cli for managing passwords\n");
+
+    //Usage
+    helpers::print_with_color_line(Color::Yellow, String::from("USAGE:"));
+    println!(" pm.exe <SUBCOMMAND> <SUBCOMMAND>\n");
+
+    //Options
+    helpers::print_with_color_line(Color::Yellow, String::from("OPTIONS:"));
+    //Options-
+    helpers::print_with_color(Color::Green, format!("{:<22}", " -h, --help"));
+    println!("Print help information");
+    //Options-2
+    helpers::print_with_color(Color::Green, format!("{:<22}", " -v, --version"));
+    println!("Print version information\n");
+
+    //Subcommands
+    helpers::print_with_color_line(Color::Yellow, String::from("SUBCOMMAND:"));
     for items in init_b_tree_map().iter() {
-        println!(" {:<15} {}", style(items.0).green(), items.1)
+        helpers::print_with_color(Color::Green, format!(" {:<20} ", items.0));
+        println!("{}", items.1);
     }
 }
 

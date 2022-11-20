@@ -1,7 +1,8 @@
-use console::style;
+use crossterm::style::Color;
 
 use super::args::Args;
 use crate::{
+    helpers,
     models::{
         args::{self},
         password::Password,
@@ -25,11 +26,11 @@ impl Add {
                     gn_pass.get_password().to_string(),
                 );
                 if let Err(error) = &db_result {
-                    return println!("{}", style(error).red());
+                    return helpers::print_with_color(Color::Red, error.to_string());
                 }
-                println!("{}", style(result).green())
+                helpers::print_with_color(Color::Green, result);
             }
-            Err(error) => println!("{}", style(error).red()),
+            Err(error) => helpers::print_with_color(Color::Red, error),
         };
     }
 
