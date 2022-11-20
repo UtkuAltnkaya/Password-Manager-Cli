@@ -77,6 +77,7 @@ impl args::Arguments for Add {
         }
         return false;
     }
+
     fn help(&self) {
         print::add::print_add_help();
     }

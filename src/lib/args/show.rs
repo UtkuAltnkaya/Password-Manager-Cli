@@ -1,3 +1,4 @@
+use cli_clipboard::{ClipboardContext, ClipboardProvider};
 use console::style;
 
 use crate::{
@@ -14,39 +15,73 @@ pub struct Show {
 }
 
 impl Show {
-    fn show_password(&self, connection: &sqlite::Connection) {
+    fn show_password(&mut self, connection: &sqlite::Connection) {
         let result =
             db_password::get_one_password(self.arguments.arguments(2).unwrap(), connection);
 
         match result {
-            Ok(password) => self.result(password),
+            Ok(mut password) => {
+                self.result(&mut password);
+                self.check_third_args(&password);
+            }
             Err(error) => println!("{}", style(error).red()),
         }
     }
 
-    fn result(&self, mut password: Password) {
+    fn result(&self, password: &mut Password) {
         println!(
             "{:<15} {:<15} {:<15}",
             style("Id").yellow(),
             style("Name").yellow(),
             style("Password").yellow(),
-            // "Id".yellow(),
-            // "Name".yellow(),
-            // "Password".yellow()
         );
         println!(
-            "{:<15} {:<15} {:<15}",
+            "{:<15} {:<15} {:<15}\n",
             1,
             password.get_password_name(),
             "********"
         );
+        password.decrypt();
 
-        let i = helpers::input_and_output("To see password press (y):");
-        if i != "y" {
+        let input = helpers::input_and_output(
+            style("To see password press (y):")
+                .blue()
+                .bold()
+                .to_string()
+                .as_str(),
+        );
+        if input.to_lowercase() != "y" {
             return;
         }
-        password.decrypt();
-        println!("{}", style(password.get_password()).blue());
+        println!("{}", style(password.get_password()).bold().green());
+    }
+
+    fn check_third_args(&mut self, password: &Password) {
+        let third_arguments = self.arguments.arguments(3);
+        match third_arguments {
+            Ok(result) => {
+                if result == "-c" || result == "--copy" {
+                    let mut ctx = ClipboardContext::new().unwrap();
+                    ctx.set_contents(password.password.to_owned()).unwrap();
+                    println!("{}", style("Password copied to clipboard").bold().green())
+                }
+            }
+            Err(_) => {
+                let input = helpers::input_and_output(
+                    style("To copy password to clipboard press (y):")
+                        .blue()
+                        .bold()
+                        .to_string()
+                        .as_str(),
+                );
+                if input.to_lowercase() == "y" {
+                    self.arguments
+                        .insert_arguments(3, String::from("--copy"))
+                        .unwrap();
+                    self.check_third_args(password);
+                }
+            }
+        }
     }
 }
 
