@@ -1,3 +1,5 @@
+use console::style;
+
 use super::args::Args;
 use crate::{
     models::{
@@ -7,7 +9,6 @@ use crate::{
     password::db_password,
     print,
 };
-use colored::Colorize;
 
 pub struct Add {
     arguments: Args,
@@ -24,11 +25,11 @@ impl Add {
                     gn_pass.get_password().to_string(),
                 );
                 if let Err(error) = &db_result {
-                    return println!("{}", error.red());
+                    return println!("{}", style(error).red());
                 }
-                println!("{}", result.green())
+                println!("{}", style(result).green())
             }
-            Err(error) => println!("{}", error.red()),
+            Err(error) => println!("{}", style(error).red()),
         };
     }
 

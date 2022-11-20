@@ -35,7 +35,7 @@ impl Password {
             last = rand1 as i32;
         }
         match self.encrypt() {
-            Ok(result) => Ok("Password successfully generated and".to_owned() + &result),
+            Ok(result) => Ok("Password successfully generated and ".to_owned() + &result),
             Err(error) => Err(error),
         }
     }

@@ -1,4 +1,4 @@
-use colored::Colorize;
+use console::style;
 
 use crate::{
     helpers,
@@ -20,16 +20,19 @@ impl Show {
 
         match result {
             Ok(password) => self.result(password),
-            Err(error) => println!("{}", error.red()),
+            Err(error) => println!("{}", style(error).red()),
         }
     }
 
     fn result(&self, mut password: Password) {
         println!(
             "{:<15} {:<15} {:<15}",
-            "Id".yellow(),
-            "Name".yellow(),
-            "Password".yellow()
+            style("Id").yellow(),
+            style("Name").yellow(),
+            style("Password").yellow(),
+            // "Id".yellow(),
+            // "Name".yellow(),
+            // "Password".yellow()
         );
         println!(
             "{:<15} {:<15} {:<15}",
@@ -38,12 +41,12 @@ impl Show {
             "********"
         );
 
-        let i = helpers::input_and_output("To see password press y:");
+        let i = helpers::input_and_output("To see password press (y):");
         if i != "y" {
             return;
         }
         password.decrypt();
-        println!("{}", password.get_password().blue());
+        println!("{}", style(password.get_password()).blue());
     }
 }
 

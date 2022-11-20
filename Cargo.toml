@@ -9,7 +9,7 @@ name = "password_manager"
 path  ="src/lib/lib.rs"
 
 [dependencies]
-colored = "2.0.0"
+console = "0.15.2"
 magic-crypt = "3.1.12"
 rand = "0.8.5"
 sqlite = "0.30.1"

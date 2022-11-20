@@ -19,7 +19,7 @@ pub fn add_password_to_db(
         .next();
 
     match result {
-        Some(_) => Err(format!("{} is is already added try different name", name)),
+        Some(_) => Err(format!("{} is is already added try different one", name)),
         None => Ok(()),
     }
 }

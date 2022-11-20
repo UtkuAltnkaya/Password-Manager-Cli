@@ -1,30 +1,34 @@
-use colored::Colorize;
+use console::style;
 
 pub fn print_add_help() {
     println!(
         "{}\n pm.exe add {} [--] {}\n",
-        "USAGE:".yellow(),
-        "[OPTIONS]".green(),
+        style("USAGE").yellow(),
+        style("[OPTIONS]").green(),
         "[args]",
     );
     println!(
         "{}\n {: <15} Enter site to add password\n",
-        "OPTIONS:".yellow(),
-        "[SITE-NAME]".green()
+        style("OPTIONS:").yellow(),
+        style("[SITE-NAME]").green(),
     );
     println!(
         "{}\n {:<15} Specify size of password (Multiples of 4 and 4, up to 128)",
-        "ARGS:".yellow(),
-        "-s  --size".green()
+        style("ARGS:").yellow(),
+        style("-s  --size").green(),
     );
     println!(
         " {:<15} Example for adding password\n",
-        "-e  --example".green()
+        style("-e  --example").green(),
     );
 }
 
 pub fn print_add_example() {
-    println!("{}", "EXAMPLE:".yellow());
-    print!(" pm.exe {} {} ", "add".yellow(), "Google".green());
-    print!("{} {}\n", "-s".yellow(), "32".green());
+    println!("{}", style("EXAMPLE:").yellow());
+    print!(
+        " pm.exe {} {} ",
+        style("add").yellow(),
+        style("Google").green()
+    );
+    print!("{} {}\n", style("-s").yellow(), style("32").green());
 }

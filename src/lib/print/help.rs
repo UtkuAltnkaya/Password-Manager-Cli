@@ -1,27 +1,27 @@
 use std::collections::BTreeMap;
 
-use colored::Colorize;
+use console::style;
 
 pub fn show() {
     println!(
         "{} {}\nCli for managing passwords\n",
-        "Password Manager".yellow(),
-        "0.1.0".green()
+        style("Password Manager").yellow(),
+        style("0.1.0").green()
     );
     println!(
         "{}\n {} <SUBCOMMAND> <SUBCOMMAND>\n",
-        "USAGE:".yellow(),
+        style("USAGE:").yellow(),
         "pm.exe",
     );
     println!(
         "{}\n {: <15} Print help information\n {:<15} Print version information\n",
-        "OPTIONS:".yellow(),
-        "-h, --help".green(),
-        "-v, --version".green(),
+        style("OPTIONS:").yellow(),
+        style("-h, --help").green(),
+        style("-v, --version").green(),
     );
-    println!("{}", "SUBCOMMAND:".yellow());
+    println!("{}", style("SUBCOMMAND:").yellow());
     for items in init_b_tree_map().iter() {
-        println!(" {:<15} {}", items.0.green(), items.1)
+        println!(" {:<15} {}", style(items.0).green(), items.1)
     }
 }
 

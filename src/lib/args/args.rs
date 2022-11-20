@@ -17,7 +17,7 @@ impl Args {
             len: items.1,
         }
     }
-    // pub fn run(&mut self, connection: &sqlite::Connection) {}
+
     pub fn run(self, connection: &sqlite::Connection) {
         if self.len == 0 {
             return print::help::show();
@@ -25,7 +25,7 @@ impl Args {
         match self.arguments(1).unwrap().as_str() {
             "add" => Add::new(self.clone()).run(connection),
             "show" => Show::new(self.clone()).run(connection),
-            "list" => list::lists_password(connection),
+            "list" | "ls" => list::lists_password(connection),
             "--help" | "help" => print::help::show(),
             _ => {}
         };
