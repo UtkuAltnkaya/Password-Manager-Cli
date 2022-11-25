@@ -9,6 +9,15 @@ impl Password {
         }
     }
 
+    pub fn new_with_password(password_name: String, password: String) -> Self {
+        let len = password.len();
+        Self {
+            password_name,
+            password,
+            len,
+        }
+    }
+
     pub fn get_password(&self) -> &String {
         &self.password
     }

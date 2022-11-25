@@ -24,34 +24,43 @@ pub fn add_password_to_db(
     }
 }
 
-pub fn list_all_passwords(connection: &sqlite::Connection) {
-    let query = "SELECT Id,Name FROM PASSWORDS";
-    connection
-        .iterate(query, |pairs| {
-            for &(_, value) in pairs.iter() {
-                print!("{:<15} ", value.unwrap())
-            }
-            println!("{:<15}", "********");
-            true
-        })
-        .unwrap();
+pub fn get_all_passwords(connection: &sqlite::Connection) -> Result<Vec<Password>, String> {
+    let query = "SELECT * FROM PASSWORDS";
+    let mut statement = connection.prepare(query).unwrap();
+    let mut password_list: Vec<Password> = Vec::new();
+    while let Ok(State::Row) = statement.next() {
+        let name = statement.read::<String, _>("Name").unwrap();
+        let password = statement.read::<String, _>("Password").unwrap();
+        password_list.push(Password::new_with_password(name, password));
+    }
+
+    if password_list.len() == 0 {
+        return Err("Password not found".to_owned());
+    }
+
+    return Ok(password_list);
 }
 
 pub fn get_one_password(
     password_name: String,
     connection: &sqlite::Connection,
 ) -> Result<Password, String> {
-    let query = format!("SELECT * FROM PASSWORDS WHERE NAME = ?");
+    let query = "SELECT * FROM PASSWORDS WHERE UPPER(NAME) = ?";
     let mut statement = connection.prepare(query).unwrap();
-    statement.bind((1, password_name.as_str())).unwrap();
+    statement
+        .bind((1, password_name.to_uppercase().as_str()))
+        .unwrap();
     let mut flag: u8 = 0;
     let mut password_obj: Password = Password::new(password_name, 32);
+
     while let Ok(State::Row) = statement.next() {
         flag += 1;
         if flag == 2 {
             break;
         }
+        let name = statement.read::<String, _>("Name").unwrap();
         let password = statement.read::<String, _>("Password").unwrap();
+        password_obj.set_password_name(name);
         password_obj.set_password(password.clone());
         password_obj.set_len(password.len());
     }

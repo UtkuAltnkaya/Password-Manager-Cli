@@ -15,6 +15,14 @@ pub fn input_and_output(color: Color, print_line: &str) -> String {
     line
 }
 
+pub fn to_title_case(item: &str) -> String {
+    let mut c = item.chars();
+    match c.next() {
+        None => String::new(),
+        Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
+    }
+}
+
 pub fn print_with_color(color: Color, content: String) {
     execute!(
         stdout(),

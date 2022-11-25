@@ -29,7 +29,7 @@ impl Show {
     }
 
     fn result(&self, password: &mut Password) {
-        helpers::print_with_color_line(
+        helpers::print_with_color_and_bold_line(
             Color::Yellow,
             format!("{:<15} {:<15} {:<15}", "Id", "Name", "Password").to_owned(),
         );
@@ -45,7 +45,7 @@ impl Show {
         if input.to_lowercase() != "y" {
             return;
         }
-        helpers::print_with_color_and_bold_line(Color::Green, password.get_password().to_owned());
+        helpers::print_with_color_and_bold_line(Color::Magenta, password.get_password().to_owned());
     }
 
     fn check_third_args(&mut self, password: &Password) {
@@ -55,7 +55,6 @@ impl Show {
                 if result == "-c" || result == "--copy" {
                     let mut ctx = ClipboardContext::new().unwrap();
                     ctx.set_contents(password.password.to_owned()).unwrap();
-
                     helpers::print_with_color_and_bold_line(
                         Color::Green,
                         String::from("Password copied to clipboard"),
@@ -110,6 +109,7 @@ impl args::Arguments for Show {
     }
 
     fn example(&self) {
+        self.help();
         print::show::print_show_example();
     }
 }

@@ -94,7 +94,7 @@ impl Menu {
     fn show_menu_items(&self) {
         helpers::print_with_color_and_bold_line(
             Color::Yellow,
-            "--------------Menu--------------".to_owned(),
+            String::from("--------------Menu--------------"),
         );
 
         for (i, item) in self.menu_items.iter().enumerate() {
