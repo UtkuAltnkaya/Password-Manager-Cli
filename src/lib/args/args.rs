@@ -31,7 +31,8 @@ impl Args {
             "add" => Add::new(self.clone()).run(connection),
             "show" => Show::new(self.clone()).run(connection),
             "list" | "ls" => list::lists_password(connection),
-            "--help" | "help" => print::help::display_help(),
+            "-h" | "--h" | "--help" | "-help" | "help" => print::help::display_help(),
+            "-v" | "--v" | "--version" | "-version" | "version" => print::display_version(),
             _ => {}
         };
     }
