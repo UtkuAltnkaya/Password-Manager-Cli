@@ -1,10 +1,6 @@
 use crossterm::style::Color;
 
-use crate::{
-    helpers,
-    models::{args, password::Password},
-    password::db_password,
-};
+use crate::{helpers, models::args, password::db_password, print};
 
 use super::args::Args;
 
@@ -14,83 +10,56 @@ pub struct Update {
 //pm update github name Github
 impl Update {
     pub fn update_password(&mut self, connection: &sqlite::Connection) {
-        let third_arg = self.arguments.arguments(3);
-        match third_arg {
-            Ok(result) => {
-                if result == "name" {
-                    self.check_fourth_arg(&result);
-                    return self.result(db_password::update::update_password_name(
-                        self.arguments.arguments(2).unwrap(),
-                        self.arguments.arguments(4).unwrap(),
-                        connection,
-                    ));
-                }
-                if result == "password" {
-                    if !self.confirm() {
-                        return;
-                    }
-                    return self.result(db_password::update::update_password(
-                        self.arguments.arguments(2).unwrap(),
-                        32,
-                        connection,
-                    ));
-                }
-
-                if result == "size" {
-                    self.check_fourth_arg(&result);
-                    let size: Result<usize, _> = self.arguments.arguments(4).unwrap().parse();
-                    if let Err(_) = size {
-                        return helpers::print_with_color_and_bold_line(
-                            Color::Red,
-                            String::from("Enter valid argument"),
-                        );
-                    }
-                    if !self.confirm() {
-                        return;
-                    }
-
-                    return self.result(db_password::update::update_password(
-                        self.arguments.arguments(2).unwrap(),
-                        size.unwrap(),
-                        connection,
-                    ));
-                }
+        let third = self.arguments.arguments(3).unwrap();
+        match third.to_lowercase().as_str() {
+            "name" => {
+                self.check_fourth_arg(&third);
+                self.result(db_password::update::update_password_name(
+                    self.arguments.arguments(2).unwrap(),
+                    self.arguments.arguments(4).unwrap(),
+                    connection,
+                ))
             }
-            Err(_) => todo!(), //TODO
+            "password" => {
+                if !helpers::confirm(String::from("After update, old password will be deleted")) {
+                    return;
+                }
+                self.result(db_password::update::update_password(
+                    self.arguments.arguments(2).unwrap(),
+                    32,
+                    connection,
+                ))
+            }
+            "size" => {
+                self.check_fourth_arg(&third);
+                let size: Result<usize, _> = self.arguments.arguments(4).unwrap().parse();
+                if let Err(_) = size {
+                    return helpers::print_with_color_and_bold_line(
+                        Color::Red,
+                        String::from("Enter valid argument"),
+                    );
+                }
+                if !helpers::confirm(String::from("After update, old password will be deleted")) {
+                    return;
+                }
+                self.result(db_password::update::update_password(
+                    self.arguments.arguments(2).unwrap(),
+                    size.unwrap(),
+                    connection,
+                ))
+            }
+            _ => {}
         }
     }
 
-    fn confirm(&self) -> bool {
-        helpers::print_with_color_line(
-            Color::Red,
-            String::from("After updated old password will be deleted"),
-        );
-        if helpers::input_and_output(Color::Red, "To confirm enter (y):").to_lowercase() == "y" {
-            println!();
-            return true;
-        }
-        return false;
-    }
-
-    fn result(&self, result: Result<Password, String>) {
+    fn result(&self, result: Result<(), String>) {
         match result {
-            Ok(password) => self.show(password),
+            Ok(()) => helpers::print_with_color_and_bold_line(
+                Color::Green,
+                String::from("Password updated"),
+            ),
             Err(error) => helpers::print_with_color_and_bold_line(Color::Red, error),
         }
-    }
-
-    fn show(&self, password: Password) {
-        helpers::print_with_color_and_bold_line(
-            Color::Yellow,
-            format!("{:<15} {:<15} {:<15}", "Id", "Name", "Password").to_owned(),
-        );
-        print!(
-            "{:<15} {:<15} {:<15}\n",
-            1,
-            password.get_password_name(),
-            "********"
-        );
-        helpers::print_with_color_and_bold_line(Color::Green, String::from("Password updated"));
     }
 
     fn check_third_arg(&mut self) {
@@ -132,18 +101,23 @@ impl args::Arguments for Update {
     fn check_second_arg(&self) -> bool {
         let arg = self.arguments.arguments(2).unwrap();
 
-        if arg == "--help" || arg == "-h" || arg == "-help" {
+        if arg == "--help" || arg == "-h" || arg == "-help" || arg == "--help" {
             self.help();
             return true;
         }
-        if arg == "-e" || arg == "--example" {
+        if arg == "-e" || arg == "--e" || arg == "--example" || arg == "-example" {
             self.example();
             return true;
         }
         return false;
     }
 
-    fn help(&self) {}
+    fn help(&self) {
+        print::update::print_add_help()
+    }
 
-    fn example(&self) {}
+    fn example(&self) {
+        self.help();
+        print::update::print_add_example();
+    }
 }

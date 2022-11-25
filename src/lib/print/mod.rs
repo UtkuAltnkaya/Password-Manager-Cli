@@ -1,4 +1,5 @@
 pub mod add;
+pub mod delete;
 pub mod help;
 pub mod show;
 pub mod update;

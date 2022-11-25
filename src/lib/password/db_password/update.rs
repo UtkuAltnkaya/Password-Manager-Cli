@@ -1,12 +1,10 @@
 use crate::models::password::Password;
 
-use super::get_one_password;
-
 pub fn update_password_name(
     password_name: String,
     new_password_name: String,
     connection: &sqlite::Connection,
-) -> Result<Password, String> {
+) -> Result<(), String> {
     let mutation = "UPDATE PASSWORDS SET NAME = ? WHERE UPPER(NAME) = ?";
     let result = connection
         .prepare(mutation)
@@ -20,7 +18,7 @@ pub fn update_password_name(
 
     match result {
         Some(_) => Err(String::from(new_password_name + " already exist")),
-        None => get_one_password(new_password_name, connection),
+        None => Ok(()),
     }
 }
 
@@ -28,7 +26,7 @@ pub fn update_password(
     password_name: String,
     size: usize,
     connection: &sqlite::Connection,
-) -> Result<Password, String> {
+) -> Result<(), String> {
     let mutation = "UPDATE PASSWORDS SET PASSWORD = ? WHERE UPPER(NAME) = ?";
     let mut password_obj = Password::new(password_name.clone(), size);
 
@@ -46,5 +44,5 @@ pub fn update_password(
         .unwrap()
         .next();
 
-    return Ok(get_one_password(password_name, connection).unwrap());
+    return Ok(());
 }

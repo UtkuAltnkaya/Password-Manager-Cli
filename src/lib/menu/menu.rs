@@ -9,7 +9,7 @@ use crossterm::{
 };
 
 use crate::{
-    args::{add::Add, args::Args, list, show::Show, update::Update},
+    args::{add::Add, args::Args, delete::Delete, list, show::Show, update::Update},
     helpers,
     models::{args::Arguments, menu::Menu},
     print,
@@ -68,12 +68,15 @@ impl Menu {
             }
             3 => {
                 args.replace_argument(1, String::from("update")).unwrap();
-                Update::new(args).run(connection);
+                Update::new(args).run(connection)
             }
-            4 => {}
+            4 => {
+                args.replace_argument(1, String::from("delete")).unwrap();
+                Delete::new(args).run(connection)
+            }
             5 => {
                 args.replace_argument(1, String::from("--help")).unwrap();
-                print::help::display_help();
+                print::help::display_help()
             }
             6 => return,
             _ => {}

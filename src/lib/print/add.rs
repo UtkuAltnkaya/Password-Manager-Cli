@@ -21,15 +21,26 @@ pub fn print_add_help() {
     println!(" Specify size of password (Multiples of 4 and 4, up to 128)");
 
     //Args-2
+    helpers::print_with_color(Color::Green, format!("{:<15}", "-h  --help"));
+    println!(" Opens help menu for add password");
+
+    //Args-3
     helpers::print_with_color(Color::Green, format!("{:<15}", "-e  --example"));
     println!(" Example for adding password\n");
 }
 
 pub fn print_add_example() {
-    helpers::print_with_color_line(Color::Yellow, String::from("Example:"));
+    helpers::print_with_color_line(Color::Yellow, String::from("EXAMPLE:"));
+
+    helpers::print_with_color(Color::Blue, String::from("[1]"));
+    print!(" pm.exe ");
+    helpers::print_with_color(Color::Yellow, String::from("add"));
+    helpers::print_with_color_line(Color::Green, String::from(" Google "));
+
+    helpers::print_with_color(Color::Blue, String::from("[2]"));
     print!(" pm.exe ");
     helpers::print_with_color(Color::Yellow, String::from("add"));
     helpers::print_with_color(Color::Green, String::from(" Google "));
     helpers::print_with_color(Color::Yellow, String::from("-s "));
-    helpers::print_with_color_line(Color::Green, String::from("32"));
+    helpers::print_with_color_line(Color::Green, String::from("64"));
 }

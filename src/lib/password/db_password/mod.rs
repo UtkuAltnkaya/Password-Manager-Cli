@@ -1,3 +1,4 @@
+pub mod delete;
 pub mod update;
 
 use sqlite::State;
@@ -27,7 +28,7 @@ pub fn add_password_to_db(
 }
 
 pub fn get_all_passwords(connection: &sqlite::Connection) -> Result<Vec<Password>, String> {
-    let query = "SELECT * FROM PASSWORDS";
+    let query = "SELECT * FROM PASSWORDS ORDER BY NAME";
     let mut statement = connection.prepare(query).unwrap();
     let mut password_list: Vec<Password> = Vec::new();
     while let Ok(State::Row) = statement.next() {
