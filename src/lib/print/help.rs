@@ -42,5 +42,6 @@ fn init_b_tree_map() -> BTreeMap<String, String> {
     arguments.insert("Update".to_owned(), "Update existing password".to_owned());
     arguments.insert("List".to_owned(), "List all password".to_owned());
     arguments.insert("Show".to_owned(), "Show one password".to_owned());
+    arguments.insert("Menu".to_owned(), "Show Menu".to_owned());
     return arguments;
 }

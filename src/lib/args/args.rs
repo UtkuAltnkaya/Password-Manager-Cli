@@ -2,7 +2,7 @@ use std::ops::Index;
 
 use crossterm::style::Color;
 
-use super::{add::Add, list, show::Show};
+use super::{add::Add, list, show::Show, update::Update};
 use crate::{
     helpers,
     models::{args::Arguments, menu::Menu},
@@ -25,12 +25,14 @@ impl Args {
     }
     pub fn run(self, connection: &sqlite::Connection) {
         if self.len == 0 {
-            return Menu::new().run(connection);
+            return print::help::display_help();
         }
         match self.arguments(1).unwrap().as_str() {
             "add" => Add::new(self.clone()).run(connection),
             "show" => Show::new(self.clone()).run(connection),
             "list" | "ls" => list::lists_password(connection),
+            "menu" => Menu::new().run(connection),
+            "update" => Update::new(self.clone()).run(connection),
             "-h" | "--h" | "--help" | "-help" | "help" => print::help::display_help(),
             "-v" | "--v" | "--version" | "-version" | "version" => print::display_version(),
             _ => {}
@@ -55,6 +57,18 @@ impl Args {
         }
         self.arguments.insert(index, element);
         self.len += 1;
+        Ok(())
+    }
+
+    pub fn replace_argument(&mut self, index: usize, element: String) -> Result<(), String> {
+        if element == "" {
+            return Err(String::from("Invalid item"));
+        }
+        if index > self.len {
+            return Err(String::from("Out of range"));
+        }
+
+        self.arguments[index] = element;
         Ok(())
     }
 

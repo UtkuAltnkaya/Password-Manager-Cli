@@ -1,3 +1,5 @@
+pub mod update;
+
 use sqlite::State;
 
 use crate::models::password::Password;

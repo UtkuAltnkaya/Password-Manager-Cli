@@ -9,7 +9,7 @@ use crossterm::{
 };
 
 use crate::{
-    args::{add::Add, args::Args, list, show::Show},
+    args::{add::Add, args::Args, list, show::Show, update::Update},
     helpers,
     models::{args::Arguments, menu::Menu},
     print,
@@ -55,21 +55,24 @@ impl Menu {
 
         match self.index {
             0 => {
-                args.insert_arguments(1, String::from("add")).unwrap();
+                args.replace_argument(1, String::from("add")).unwrap();
                 Add::new(args).run(connection)
             }
             1 => {
-                args.insert_arguments(1, String::from("show")).unwrap();
+                args.replace_argument(1, String::from("show")).unwrap();
                 Show::new(args).run(connection)
             }
             2 => {
-                args.insert_arguments(1, String::from("list")).unwrap();
+                args.replace_argument(1, String::from("list")).unwrap();
                 list::lists_password(connection)
             }
-            3 => {}
+            3 => {
+                args.replace_argument(1, String::from("update")).unwrap();
+                Update::new(args).run(connection);
+            }
             4 => {}
             5 => {
-                args.insert_arguments(1, String::from("--help")).unwrap();
+                args.replace_argument(1, String::from("--help")).unwrap();
                 print::help::display_help();
             }
             6 => return,

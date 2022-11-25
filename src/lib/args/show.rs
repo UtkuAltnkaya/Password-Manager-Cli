@@ -28,7 +28,7 @@ impl Show {
         }
     }
 
-    fn result(&self, password: &mut Password) {
+    pub fn result(&self, password: &mut Password) {
         helpers::print_with_color_and_bold_line(
             Color::Yellow,
             format!("{:<15} {:<15} {:<15}", "Id", "Name", "Password").to_owned(),
