@@ -9,21 +9,15 @@ pub fn read_from_env() {
 
     if let Err(error) = result {
         if error.not_found() {
-            helpers::print_with_color_and_bold_line(
-                Color::Red,
-                String::from(".env file not found"),
-            );
-            if helpers::confirm(
-                Color::Yellow,
-                String::from("Would you like to create env file"),
-            ) {
+            helpers::print_with_color_and_bold_line(Color::Red, ".env file not found");
+            if helpers::confirm(Color::Yellow, "Would you like to create env file") {
                 create_env_file();
                 dotenv::dotenv().unwrap();
                 return;
             }
         }
 
-        helpers::print_with_color_and_bold_line(Color::Red, error.to_string());
+        helpers::print_with_color_and_bold_line(Color::Red, error.to_string().as_str());
         std::process::exit(1);
     }
 }
@@ -33,15 +27,12 @@ pub fn check_secret_key() {
     if secret_key == "" {
         helpers::print_with_color_and_bold_line(
             Color::Red,
-            String::from("No secret key found default will use (not recommended)!"),
+            "No secret key found default will use (not recommended)!",
         );
 
-        helpers::print_with_color_and_bold(
-            Color::Yellow,
-            String::from("To see how to change secret key:"),
-        );
+        helpers::print_with_color_and_bold(Color::Yellow, "To see how to change secret key:");
 
-        helpers::print_with_color_and_bold_line(Color::Magenta, String::from(" pm --help env"));
+        helpers::print_with_color_and_bold_line(Color::Magenta, " pm --help env");
         std::env::set_var(
             "SECRET_KEY",
             "W?Xa8Q?E>7g3A=O)s6n6N8>s6L3P6pZ2V>n-CwSv$F(1_1)BlO[0x5p$x_a4d4u&",

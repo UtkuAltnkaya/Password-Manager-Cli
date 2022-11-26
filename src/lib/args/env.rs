@@ -20,15 +20,15 @@ impl Env {
         if arg == "get" {
             helpers::print_with_color_and_bold_line(
                 Color::Yellow,
-                std::env::var("SECRET_KEY").unwrap(),
+                &std::env::var("SECRET_KEY").unwrap(),
             );
         }
     }
 
     fn set_env_secret_key(&self) {
-        if !helpers::confirm(Color::Red,String::from(
-        "After set secret key all the password will delete and old secret key will not be access",
-    )) {
+        if !helpers::confirm(Color::Red,
+        "After setting a secret key, all the password will delete and old secret key will not be access",
+    ) {
         return;
     }
 
@@ -45,7 +45,7 @@ impl args::Arguments for Env {
 
     fn run(&mut self, _: &sqlite::Connection) {
         if self.arguments.get_len() == 1 {
-            self.arguments.get_from_console("Enter env commend:");
+            self.arguments.get_from_console("Enter env command:");
         }
         if self.check_second_arg() {
             return;

@@ -21,10 +21,7 @@ impl Update {
                 ))
             }
             "password" => {
-                if !helpers::confirm(
-                    Color::Red,
-                    String::from("After update, old password will be deleted"),
-                ) {
+                if !helpers::confirm(Color::Red, "After update, old password will be deleted") {
                     return;
                 }
                 self.result(db_password::update::update_password(
@@ -39,13 +36,10 @@ impl Update {
                 if let Err(_) = size {
                     return helpers::print_with_color_and_bold_line(
                         Color::Red,
-                        String::from("Enter valid argument"),
+                        "Enter valid argument",
                     );
                 }
-                if !helpers::confirm(
-                    Color::Red,
-                    String::from("After update, old password will be deleted"),
-                ) {
+                if !helpers::confirm(Color::Red, "After update, old password will be deleted") {
                     return;
                 }
                 self.result(db_password::update::update_password(
@@ -60,11 +54,8 @@ impl Update {
 
     fn result(&self, result: Result<(), String>) {
         match result {
-            Ok(()) => helpers::print_with_color_and_bold_line(
-                Color::Green,
-                String::from("Password updated"),
-            ),
-            Err(error) => helpers::print_with_color_and_bold_line(Color::Red, error),
+            Ok(()) => helpers::print_with_color_and_bold_line(Color::Green, "Password updated"),
+            Err(error) => helpers::print_with_color_and_bold_line(Color::Red, &error),
         }
     }
 

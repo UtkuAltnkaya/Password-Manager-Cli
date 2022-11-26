@@ -98,16 +98,13 @@ impl Menu {
     }
 
     fn show_menu_items(&self) {
-        helpers::print_with_color_and_bold_line(
-            Color::Yellow,
-            String::from("--------------Menu--------------"),
-        );
+        helpers::print_with_color_and_bold_line(Color::Yellow, "--------------Menu--------------");
 
         for (i, item) in self.menu_items.iter().enumerate() {
             if i == self.index {
                 helpers::print_with_color_and_bold_line(
                     Color::Blue,
-                    format!("➜ {}", item).to_owned(),
+                    &format!("➜ {}", item).to_owned(),
                 );
                 continue;
             }

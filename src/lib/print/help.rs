@@ -6,27 +6,27 @@ use crate::helpers;
 
 pub fn display_help() {
     //Title
-    helpers::print_with_color_and_bold(Color::Yellow, String::from("Password Manager "));
-    helpers::print_with_color_and_bold_line(Color::Green, String::from("0.1.0"));
+    helpers::print_with_color_and_bold(Color::Yellow, "Password Manager ");
+    helpers::print_with_color_and_bold_line(Color::Green, "0.1.0");
     println!("Cli for managing passwords\n");
 
     //Usage
-    helpers::print_with_color_line(Color::Yellow, String::from("USAGE:"));
+    helpers::print_with_color_line(Color::Yellow, "USAGE:");
     println!(" pm.exe <SUBCOMMAND> <SUBCOMMAND>\n");
 
     //Options
-    helpers::print_with_color_line(Color::Yellow, String::from("OPTIONS:"));
+    helpers::print_with_color_line(Color::Yellow, "OPTIONS:");
     //Options-
-    helpers::print_with_color(Color::Green, format!("{:<22}", " -h, --help"));
+    helpers::print_with_color(Color::Green, &format!("{:<22}", " -h, --help"));
     println!("Print help information");
     //Options-2
-    helpers::print_with_color(Color::Green, format!("{:<22}", " -v, --version"));
+    helpers::print_with_color(Color::Green, &format!("{:<22}", " -v, --version"));
     println!("Print version information\n");
 
     //Subcommands
-    helpers::print_with_color_line(Color::Yellow, String::from("SUBCOMMAND:"));
+    helpers::print_with_color_line(Color::Yellow, "SUBCOMMAND:");
     for items in init_b_tree_map().iter() {
-        helpers::print_with_color(Color::Green, format!(" {:<20} ", items.0));
+        helpers::print_with_color(Color::Green, &format!(" {:<20} ", items.0));
         println!("{}", items.1);
     }
 }

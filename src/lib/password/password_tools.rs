@@ -59,7 +59,7 @@ impl Password {
             Err(_) => {
                 helpers::print_with_color_and_bold_line(
                     Color::Red,
-                    String::from("Could not decrypt the password"),
+                    "Could not decrypt the password",
                 );
                 std::process::exit(1);
             }

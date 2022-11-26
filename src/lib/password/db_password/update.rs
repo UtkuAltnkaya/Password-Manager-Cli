@@ -28,7 +28,7 @@ pub fn update_password(
     connection: &sqlite::Connection,
 ) -> Result<(), String> {
     let mutation = "UPDATE PASSWORDS SET PASSWORD = ? WHERE UPPER(NAME) = ?";
-    let mut password_obj = Password::new(password_name.clone(), size);
+    let mut password_obj = Password::new(&password_name, size);
 
     if let Err(error) = password_obj.generate_password() {
         return Err(error);

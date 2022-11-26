@@ -54,7 +54,7 @@ pub fn get_one_password(
         .bind((1, password_name.to_uppercase().as_str()))
         .unwrap();
     let mut flag: u8 = 0;
-    let mut password_obj: Password = Password::new(password_name, 32);
+    let mut password_obj: Password = Password::new(&password_name, 32);
 
     while let Ok(State::Row) = statement.next() {
         flag += 1;
@@ -64,7 +64,7 @@ pub fn get_one_password(
         let name = statement.read::<String, _>("Name").unwrap();
         let password = statement.read::<String, _>("Password").unwrap();
         password_obj.set_password_name(name);
-        password_obj.set_password(password.clone());
+        password_obj.set_password(&password);
         password_obj.set_len(password.len());
     }
 

@@ -15,30 +15,25 @@ impl Delete {
         if arg == "--all" {
             return self.delete_all(connection);
         }
-        if !helpers::confirm(
-            Color::Red,
-            String::from("It will delete ".to_owned() + &arg + "!"),
-        ) {
+        if !helpers::confirm(Color::Red, &format!("It will delete {} !", &arg)) {
             return;
         }
         match db_password::delete::delete_one_password(arg, connection) {
-            Ok(_) => helpers::print_with_color_line(Color::Green, String::from("Password deleted")),
-            Err(err) => helpers::print_with_color_line(Color::Red, err),
+            Ok(_) => helpers::print_with_color_line(Color::Green, "Password deleted"),
+            Err(err) => helpers::print_with_color_line(Color::Red, &err),
         };
     }
 
     fn delete_all(&self, connection: &sqlite::Connection) {
-        if !helpers::confirm(Color::Red, String::from("It will delete all passwords!")) {
+        if !helpers::confirm(Color::Red, "It will delete all passwords!") {
             return;
         }
-        if !helpers::confirm(Color::Red, String::from("Are you sure you want to do this")) {
+        if !helpers::confirm(Color::Red, "Are you sure you want to do this") {
             return;
         }
         match db_password::delete::delete_all_passwords(connection) {
-            Ok(_) => {
-                helpers::print_with_color_line(Color::Green, String::from("Passwords deleted"))
-            }
-            Err(err) => helpers::print_with_color_line(Color::Red, err),
+            Ok(_) => helpers::print_with_color_line(Color::Green, "Passwords deleted"),
+            Err(err) => helpers::print_with_color_line(Color::Red, &err),
         };
     }
 }

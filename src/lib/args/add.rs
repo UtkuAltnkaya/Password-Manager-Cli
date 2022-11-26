@@ -17,7 +17,7 @@ pub struct Add {
 
 impl Add {
     fn add_password(&self, second_argument: String, size: usize, connection: &sqlite::Connection) {
-        let mut gn_pass = Password::new(second_argument.clone(), size);
+        let mut gn_pass = Password::new(&second_argument, size);
         match gn_pass.generate_password() {
             Ok(result) => {
                 let db_result = db_password::add_password_to_db(
@@ -26,11 +26,11 @@ impl Add {
                     gn_pass.get_password().to_string(),
                 );
                 if let Err(error) = &db_result {
-                    return helpers::print_with_color(Color::Red, error.to_string());
+                    return helpers::print_with_color(Color::Red, &error.to_string());
                 }
-                helpers::print_with_color(Color::Green, result);
+                helpers::print_with_color(Color::Green, &result);
             }
-            Err(error) => helpers::print_with_color(Color::Red, error),
+            Err(error) => helpers::print_with_color(Color::Red, &error),
         };
     }
 

@@ -7,7 +7,7 @@ use crossterm::{
 
 pub fn input_and_output(color: Color, print_line: &str) -> String {
     let mut line: String = String::new();
-    print_with_color(color, print_line.to_owned());
+    print_with_color(color, print_line);
 
     io::stdout().flush().unwrap();
     io::stdin().read_line(&mut line).unwrap();
@@ -15,14 +15,14 @@ pub fn input_and_output(color: Color, print_line: &str) -> String {
     line
 }
 
-pub fn confirm(color: Color, print_line: String) -> bool {
-    print_with_color_line(color, print_line);
+pub fn confirm(color: Color, print_line: &str) -> bool {
+    print_with_color_line(color, &print_line);
     if input_and_output(color, "To confirm press (y):").to_lowercase() == "y" {
         return true;
     }
     return false;
 }
-pub fn print_with_color(color: Color, content: String) {
+pub fn print_with_color(color: Color, content: &str) {
     execute!(
         stdout(),
         style::SetForegroundColor(color),
@@ -32,12 +32,12 @@ pub fn print_with_color(color: Color, content: String) {
     .unwrap();
 }
 
-pub fn print_with_color_line(color: Color, content: String) {
+pub fn print_with_color_line(color: Color, content: &str) {
     print_with_color(color, content);
     println!();
 }
 
-pub fn print_with_color_and_bold(color: Color, content: String) {
+pub fn print_with_color_and_bold(color: Color, content: &str) {
     execute!(
         stdout(),
         style::SetForegroundColor(color),
@@ -48,7 +48,7 @@ pub fn print_with_color_and_bold(color: Color, content: String) {
     .unwrap();
 }
 
-pub fn print_with_color_and_bold_line(color: Color, content: String) {
+pub fn print_with_color_and_bold_line(color: Color, content: &str) {
     print_with_color_and_bold(color, content);
     println!()
 }

@@ -24,14 +24,14 @@ impl Show {
                 self.result(&mut password);
                 self.check_third_args(&password);
             }
-            Err(error) => helpers::print_with_color(Color::Red, error),
+            Err(error) => helpers::print_with_color(Color::Red, &error),
         }
     }
 
     pub fn result(&self, password: &mut Password) {
         helpers::print_with_color_and_bold_line(
             Color::Yellow,
-            format!("{:<15} {:<15} {:<15}", "Id", "Name", "Password").to_owned(),
+            &format!("{:<15} {:<15} {:<15}", "Id", "Name", "Password").to_owned(),
         );
         println!(
             "{:<15} {:<15} {:<15}\n",
@@ -45,7 +45,7 @@ impl Show {
         if input.to_lowercase() != "y" {
             return;
         }
-        helpers::print_with_color_and_bold_line(Color::Magenta, password.get_password().to_owned());
+        helpers::print_with_color_and_bold_line(Color::Magenta, password.get_password());
     }
 
     fn check_third_args(&mut self, password: &Password) {
@@ -57,7 +57,7 @@ impl Show {
                     ctx.set_contents(password.password.to_owned()).unwrap();
                     helpers::print_with_color_and_bold_line(
                         Color::Green,
-                        String::from("Password copied to clipboard"),
+                        "Password copied to clipboard",
                     );
                 }
             }

@@ -1,9 +1,9 @@
 use crate::models::password::Password;
 
 impl Password {
-    pub fn new(password_name: String, size: usize) -> Self {
+    pub fn new(password_name: &String, size: usize) -> Self {
         Self {
-            password_name: password_name,
+            password_name: password_name.to_string(),
             password: "".to_owned(),
             len: size,
         }
@@ -21,8 +21,8 @@ impl Password {
     pub fn get_password(&self) -> &String {
         &self.password
     }
-    pub fn set_password(&mut self, password: String) {
-        self.password = password;
+    pub fn set_password(&mut self, password: &String) {
+        self.password = password.to_string();
     }
 
     pub fn get_len(&self) -> &usize {
