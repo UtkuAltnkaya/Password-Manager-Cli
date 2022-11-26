@@ -1,7 +1,8 @@
+use crossterm::style::Color;
 use magic_crypt::{new_magic_crypt, MagicCryptTrait};
 use rand::Rng;
 
-use crate::models::password::Password;
+use crate::{helpers, models::password::Password};
 
 impl Password {
     pub fn generate_password(&mut self) -> Result<String, String> {
@@ -41,7 +42,7 @@ impl Password {
     }
 
     fn encrypt(&mut self) -> Result<String, String> {
-        let mc = new_magic_crypt!("killer_queen", 256);
+        let mc = new_magic_crypt!(std::env::var("SECRET_KEY").unwrap(), 256);
         let hash = mc.encrypt_str_to_base64(&self.password);
         if let "" = hash.as_str() {
             return Err("An error occurred while encrypting".to_owned());
@@ -51,7 +52,17 @@ impl Password {
     }
 
     pub fn decrypt(&mut self) {
-        let mc = new_magic_crypt!("killer_queen", 256);
-        self.password = mc.decrypt_base64_to_string(&self.password).unwrap();
+        let mc = new_magic_crypt!(std::env::var("SECRET_KEY").unwrap(), 256);
+        let result = mc.decrypt_base64_to_string(&self.password);
+        match result {
+            Ok(d_password) => self.password = d_password,
+            Err(_) => {
+                helpers::print_with_color_and_bold_line(
+                    Color::Red,
+                    String::from("Could not decrypt the password"),
+                );
+                std::process::exit(1);
+            }
+        }
     }
 }

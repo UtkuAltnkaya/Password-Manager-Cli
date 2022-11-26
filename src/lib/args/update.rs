@@ -21,7 +21,10 @@ impl Update {
                 ))
             }
             "password" => {
-                if !helpers::confirm(String::from("After update, old password will be deleted")) {
+                if !helpers::confirm(
+                    Color::Red,
+                    String::from("After update, old password will be deleted"),
+                ) {
                     return;
                 }
                 self.result(db_password::update::update_password(
@@ -39,7 +42,10 @@ impl Update {
                         String::from("Enter valid argument"),
                     );
                 }
-                if !helpers::confirm(String::from("After update, old password will be deleted")) {
+                if !helpers::confirm(
+                    Color::Red,
+                    String::from("After update, old password will be deleted"),
+                ) {
                     return;
                 }
                 self.result(db_password::update::update_password(

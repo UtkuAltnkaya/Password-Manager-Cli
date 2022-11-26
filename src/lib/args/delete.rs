@@ -15,7 +15,10 @@ impl Delete {
         if arg == "--all" {
             return self.delete_all(connection);
         }
-        if !helpers::confirm(String::from("It will delete ".to_owned() + &arg + "!")) {
+        if !helpers::confirm(
+            Color::Red,
+            String::from("It will delete ".to_owned() + &arg + "!"),
+        ) {
             return;
         }
         match db_password::delete::delete_one_password(arg, connection) {
@@ -25,10 +28,10 @@ impl Delete {
     }
 
     fn delete_all(&self, connection: &sqlite::Connection) {
-        if !helpers::confirm(String::from("It will delete all passwords!")) {
+        if !helpers::confirm(Color::Red, String::from("It will delete all passwords!")) {
             return;
         }
-        if !helpers::confirm(String::from("Are you sure you want to do this")) {
+        if !helpers::confirm(Color::Red, String::from("Are you sure you want to do this")) {
             return;
         }
         match db_password::delete::delete_all_passwords(connection) {

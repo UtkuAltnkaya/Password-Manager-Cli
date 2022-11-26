@@ -15,9 +15,9 @@ pub fn input_and_output(color: Color, print_line: &str) -> String {
     line
 }
 
-pub fn confirm(print_line: String) -> bool {
-    print_with_color_line(Color::Red, print_line);
-    if input_and_output(Color::Red, "To confirm press (y):").to_lowercase() == "y" {
+pub fn confirm(color: Color, print_line: String) -> bool {
+    print_with_color_line(color, print_line);
+    if input_and_output(color, "To confirm press (y):").to_lowercase() == "y" {
         return true;
     }
     return false;
