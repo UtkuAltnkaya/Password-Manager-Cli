@@ -1,7 +1,4 @@
-use std::{
-    fs::{self, File},
-    io::Write,
-};
+use std::{fs::File, io::Write};
 
 use crossterm::style::Color;
 
@@ -56,15 +53,4 @@ pub fn check_secret_key() {
 fn create_env_file() {
     let mut file = File::create(".env").expect("Error encountered while creating file!");
     file.write_all(b"SECRET_KEY=\"\"").unwrap();
-}
-
-pub fn set_env_secret_key() {
-    if !helpers::confirm(Color::Red,String::from(
-        "After set secret key all the password will delete and old secret key will not be access",
-    )) {
-        return;
-    }
-
-    let input = helpers::input_and_output(Color::Grey, "Enter new secret key:");
-    fs::write(".env", format!("SECRET_KEY=\"{}\"", input)).unwrap();
 }

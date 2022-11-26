@@ -43,5 +43,6 @@ fn init_b_tree_map() -> BTreeMap<String, String> {
     arguments.insert("List".to_owned(), "List all password".to_owned());
     arguments.insert("Show".to_owned(), "Show one password".to_owned());
     arguments.insert("Menu".to_owned(), "Show Menu".to_owned());
+    arguments.insert("Env".to_owned(), "Show env menu".to_owned());
     return arguments;
 }

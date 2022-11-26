@@ -2,7 +2,7 @@ use std::ops::Index;
 
 use crossterm::style::Color;
 
-use super::{add::Add, delete::Delete, list, show::Show, update::Update};
+use super::{add::Add, delete::Delete, env::Env, list, show::Show, update::Update};
 use crate::{
     helpers,
     models::{args::Arguments, menu::Menu},
@@ -34,6 +34,7 @@ impl Args {
             "menu" => Menu::new().run(connection),
             "update" => Update::new(self.clone()).run(connection),
             "delete" => Delete::new(self.clone()).run(connection),
+            "env" => Env::new(self.clone()).run(connection),
             "-h" | "--h" | "--help" | "-help" | "help" => print::help::display_help(),
             "-v" | "--v" | "--version" | "-version" | "version" => print::display_version(),
             _ => {}
