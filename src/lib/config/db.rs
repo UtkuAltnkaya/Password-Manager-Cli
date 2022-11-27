@@ -30,8 +30,9 @@ impl DbConnection {
                         Color::Red,
                         "Database path and file not found",
                     );
-                    if helpers::confirm(Color::Blue, "Would you like to create one:") {
+                    if helpers::confirm(Color::Yellow, "Would you like to create one:") {
                         DbConnection::create_dir_an_db();
+                        println!();
                         return DbConnection::check_db_location(path);
                     }
                 }

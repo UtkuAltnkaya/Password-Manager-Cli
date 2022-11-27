@@ -12,6 +12,7 @@ fn main() {
     let db = DbConnection::new(&(path + r"db\table.db"));
     db.create_password_table();
     let connection = db.get_connection();
+
     let args = Args::new();
     args.run(connection);
 }

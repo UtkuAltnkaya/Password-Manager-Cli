@@ -64,14 +64,14 @@ impl Env {
                 helpers::print_with_color_and_bold_line(Color::Red, ".env file not found");
                 if helpers::confirm(Color::Yellow, "Would you like to create env file") {
                     Env::create_env_file(path);
-                    Env::read_from_env(path);
-                    return;
+                    return Env::read_from_env(path);
                 }
             }
 
             helpers::print_with_color_and_bold_line(Color::Red, &error.to_string());
             std::process::exit(1);
         }
+        println!()
     }
 
     ///Checks the secret key that is stored in ".env" file
@@ -88,7 +88,7 @@ impl Env {
 
             helpers::print_with_color_and_bold(Color::Yellow, "To see how to change secret key:");
 
-            helpers::print_with_color_and_bold_line(Color::Magenta, " pm --help env");
+            helpers::print_with_color_and_bold_line(Color::Magenta, " pm env --help");
             std::env::set_var(
                 "SECRET_KEY",
                 "W?Xa8Q?E>7g3A=O)s6n6N8>s6L3P6pZ2V>n-CwSv$F(1_1)BlO[0x5p$x_a4d4u&",
