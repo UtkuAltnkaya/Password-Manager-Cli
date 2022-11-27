@@ -1,4 +1,7 @@
-use std::fs;
+use std::{
+    fs::{self, File},
+    io::Write,
+};
 
 use crossterm::style::Color;
 
@@ -26,14 +29,58 @@ impl Env {
     }
 
     fn set_env_secret_key(&self) {
-        if !helpers::confirm(Color::Red,
-        "After setting a secret key, all the password will delete and old secret key will not be access",
-    ) {
-        return;
-    }
+        let confirm = helpers::confirm(Color::Red,
+        "After setting a secret key, all the password will delete and old secret key will not be access");
+        if !confirm {
+            return;
+        }
 
         let input = helpers::input_and_output(Color::Grey, "Enter new secret key:");
-        fs::write(".env", format!("SECRET_KEY=\"{}\"", input)).unwrap();
+        let path = helpers::exe_location();
+
+        fs::write(path + ".env", format!("SECRET_KEY=\"{}\"", input)).unwrap();
+    }
+
+    pub fn read_from_env(path: &str) {
+        let result = dotenv::from_path(path);
+
+        if let Err(error) = result {
+            if error.not_found() {
+                helpers::print_with_color_and_bold_line(Color::Red, ".env file not found");
+                if helpers::confirm(Color::Yellow, "Would you like to create env file") {
+                    Env::create_env_file(path);
+                    Env::read_from_env(path);
+                    return;
+                }
+            }
+
+            helpers::print_with_color_and_bold_line(Color::Red, &error.to_string());
+            std::process::exit(1);
+        }
+    }
+
+    pub fn check_secret_key() {
+        let secret_key = std::env::var("SECRET_KEY").unwrap();
+        if secret_key == "" {
+            helpers::print_with_color_and_bold_line(
+                Color::Red,
+                "No secret key found default will use (not recommended)!",
+            );
+
+            helpers::print_with_color_and_bold(Color::Yellow, "To see how to change secret key:");
+
+            helpers::print_with_color_and_bold_line(Color::Magenta, " pm --help env");
+            std::env::set_var(
+                "SECRET_KEY",
+                "W?Xa8Q?E>7g3A=O)s6n6N8>s6L3P6pZ2V>n-CwSv$F(1_1)BlO[0x5p$x_a4d4u&",
+            );
+            println!();
+        }
+    }
+
+    fn create_env_file(path: &str) {
+        let mut file = File::create(path).expect("Error encountered while creating file!");
+        file.write_all(b"SECRET_KEY=\"\"").unwrap();
     }
 }
 

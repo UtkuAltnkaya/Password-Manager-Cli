@@ -1,4 +1,7 @@
-use std::io::{self, stdout, Write};
+use std::{
+    env,
+    io::{self, stdout, Write},
+};
 
 use crossterm::{
     execute,
@@ -51,4 +54,9 @@ pub fn print_with_color_and_bold(color: Color, content: &str) {
 pub fn print_with_color_and_bold_line(color: Color, content: &str) {
     print_with_color_and_bold(color, content);
     println!()
+}
+
+pub fn exe_location() -> String {
+    let path = env::current_exe().unwrap().display().to_string();
+    path.trim_end_matches("pm.exe").to_string()
 }
