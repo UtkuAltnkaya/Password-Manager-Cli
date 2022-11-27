@@ -17,7 +17,7 @@ It is a command line interface for managing passwords
 
 - _".env"_ file  
   `You can create your own .env file to exe path`  
-  `Note that you have to add _SECRET_KEY = ""`  
+  `Note that you have to add SECRET_KEY = ""`  
   `You can assign any secret key you want`
 
 - _"table.db"_ file  
