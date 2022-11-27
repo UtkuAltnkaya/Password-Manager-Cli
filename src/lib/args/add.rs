@@ -42,7 +42,7 @@ impl Add {
             Err(error) => helpers::print_with_color(Color::Red, &error),
         };
     }
-    ///It check the third argument witch is use for specify the size of password
+    ///It check the third argument which is use for specify the size of password
     fn check_third_args(&self) -> usize {
         let mut size: usize = 32;
         if self.arguments.get_len() != 4 {
