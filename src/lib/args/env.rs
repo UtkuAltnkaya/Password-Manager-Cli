@@ -8,11 +8,22 @@ use crossterm::style::Color;
 use super::args::Args;
 use crate::{helpers, models::args, print};
 
+///USAGE:
+///pm env set
+///
+/// or
+///
+///pm env get
 pub struct Env {
     arguments: Args,
 }
 
 impl Env {
+    ///It runs env
+    ///
+    ///If it is set then run that function
+    ///
+    ///If it is get print the Key
     fn env_run(&self) {
         let arg = self.arguments.arguments(2).unwrap().to_lowercase();
 
@@ -28,6 +39,7 @@ impl Env {
         }
     }
 
+    ///It sets new secret key to ".env" file
     fn set_env_secret_key(&self) {
         let confirm = helpers::confirm(Color::Red,
         "After setting a secret key, all the password will delete and old secret key will not be access");
@@ -41,6 +53,9 @@ impl Env {
         fs::write(path + ".env", format!("SECRET_KEY=\"{}\"", input)).unwrap();
     }
 
+    ///Reads the secret key from ".env" file
+    ///
+    ///If file not exist then ask user the create a .env file
     pub fn read_from_env(path: &str) {
         let result = dotenv::from_path(path);
 
@@ -59,6 +74,10 @@ impl Env {
         }
     }
 
+    ///Checks the secret key that is stored in ".env" file
+    ///
+    ///If nothing specified for secret key
+    /// use the default one
     pub fn check_secret_key() {
         let secret_key = std::env::var("SECRET_KEY").unwrap();
         if secret_key == "" {
@@ -78,18 +97,22 @@ impl Env {
         }
     }
 
+    ///Creates ".env" file from exe path
+    ///
+    ///Write "SECRET_KEY="
     fn create_env_file(path: &str) {
         let mut file = File::create(path).expect("Error encountered while creating file!");
         file.write_all(b"SECRET_KEY=\"\"").unwrap();
     }
 }
 
-//pm env set
 impl args::Arguments for Env {
+    ///Returns instance of Args struct
     fn new(arguments: Args) -> Self {
         Self { arguments }
     }
 
+    ///Run for env argument
     fn run(&mut self, _: &sqlite::Connection) {
         if self.arguments.get_len() == 1 {
             self.arguments.get_from_console("Enter env command:");
@@ -100,6 +123,7 @@ impl args::Arguments for Env {
         self.env_run();
     }
 
+    ///Checks second argument which can be "help" or "example"
     fn check_second_arg(&self) -> bool {
         let arg = self.arguments.arguments(2).unwrap();
         if arg == "--help" || arg == "-h" || arg == "-help" {
@@ -113,10 +137,12 @@ impl args::Arguments for Env {
         return false;
     }
 
+    ///Runs help function for env argument
     fn help(&self) {
         print::env::print_env_help();
     }
 
+    ///Runs help first then example for env argument
     fn example(&self) {
         self.help();
         print::env::print_env_example();

@@ -2,6 +2,7 @@ use crossterm::style::Color;
 
 use crate::{helpers, models::password::Password, password::db_password};
 
+///Lists all password recorded in database
 pub fn lists_password(connection: &sqlite::Connection) {
     let result = db_password::get_all_passwords(connection);
     match result {
@@ -10,6 +11,7 @@ pub fn lists_password(connection: &sqlite::Connection) {
     }
 }
 
+///Proper print for passwords
 fn print_passwords(password_list: Vec<Password>) {
     helpers::print_with_color_and_bold_line(
         Color::Yellow,

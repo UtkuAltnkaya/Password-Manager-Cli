@@ -4,11 +4,20 @@ use crate::{helpers, models::args, password::db_password, print};
 
 use super::args::Args;
 
+///USAGE:
+///pm update "PASSWORD-NAME" name "NEW-PASSWORD-NAME"
+///
+/// or
+///pm update "PASSWORD-NAME" password
+///
+///or
+///
+///pm update "PASSWORD-NAME" size "NEW-PASSWORD-SIZE"
 pub struct Update {
     arguments: Args,
 }
-//pm update github name Github
 impl Update {
+    ///It updates for proper argument which can be "name","password","size".
     pub fn update_password(&mut self, connection: &sqlite::Connection) {
         let third = self.arguments.arguments(3).unwrap();
         match third.to_lowercase().as_str() {
@@ -52,6 +61,9 @@ impl Update {
         }
     }
 
+    ///If password updated successfully print the result.
+    ///
+    ///If not print the error.
     fn result(&self, result: Result<(), String>) {
         match result {
             Ok(()) => helpers::print_with_color_and_bold_line(Color::Green, "Password updated"),
@@ -59,6 +71,9 @@ impl Update {
         }
     }
 
+    ///Checks the third argument which can be "name","password","size"
+    ///
+    ///If not entered get from cli.
     fn check_third_arg(&mut self) {
         if let Err(_) = self.arguments.arguments(3) {
             let input =
@@ -68,6 +83,9 @@ impl Update {
         }
     }
 
+    ///Checks the fourth argument which can be "NEW-PASSWORD-NAME" or "NEW-PASSWORD-SIZE"
+    ///
+    ///If not entered get from cli
     fn check_fourth_arg(&mut self, operation_type: &String) {
         if let Err(_) = self.arguments.arguments(4) {
             let input =
@@ -78,11 +96,15 @@ impl Update {
     }
 }
 
+///Trait implementation for Update
 impl args::Arguments for Update {
+    ///Returns instance of Update struct
     fn new(arguments: Args) -> Self {
         Self { arguments }
     }
 
+    ///It checks user entered the password name to update
+    ///If not get from cli
     fn run(&mut self, connection: &sqlite::Connection) {
         if self.arguments.get_len() == 1 {
             self.arguments
@@ -95,6 +117,7 @@ impl args::Arguments for Update {
         self.update_password(connection);
     }
 
+    ///Checks second argument which can be "help" or "example"
     fn check_second_arg(&self) -> bool {
         let arg = self.arguments.arguments(2).unwrap();
 
@@ -109,10 +132,12 @@ impl args::Arguments for Update {
         return false;
     }
 
+    ///It runs help function for show argument
     fn help(&self) {
         print::update::print_add_help()
     }
 
+    ///It runs help function first then runs example for show argument
     fn example(&self) {
         self.help();
         print::update::print_add_example();

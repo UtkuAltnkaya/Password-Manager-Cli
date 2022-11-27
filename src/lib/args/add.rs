@@ -3,19 +3,27 @@ use crossterm::style::Color;
 use super::args::Args;
 use crate::{
     helpers,
-    models::{
-        args::{self},
-        password::Password,
-    },
+    models::{args, password::Password},
     password::db_password,
     print,
 };
 
+///Usage:
+///pm add "PASSWORD-NAME"
+///
+/// or
+///
+///pm add "PASSWORD-NAME" -s 64
+///
+///-s is used for specify size of password
 pub struct Add {
     arguments: Args,
 }
 
+//Implementation for Add struct
 impl Add {
+    ///It generate a random password and store in database.
+    ///It will occurs an error when same password name record in database.
     fn add_password(&self, second_argument: String, size: usize, connection: &sqlite::Connection) {
         let mut gn_pass = Password::new(&second_argument, size);
         match gn_pass.generate_password() {
@@ -25,6 +33,7 @@ impl Add {
                     second_argument,
                     gn_pass.get_password().to_string(),
                 );
+
                 if let Err(error) = &db_result {
                     return helpers::print_with_color(Color::Red, &error.to_string());
                 }
@@ -33,7 +42,7 @@ impl Add {
             Err(error) => helpers::print_with_color(Color::Red, &error),
         };
     }
-
+    ///It check the third argument witch is use for specify the size of password
     fn check_third_args(&self) -> usize {
         let mut size: usize = 32;
         if self.arguments.get_len() != 4 {
@@ -47,10 +56,19 @@ impl Add {
     }
 }
 
+///Trait implementation for Add
 impl args::Arguments for Add {
+    ///It returns instance for Add struct
     fn new(arguments: Args) -> Self {
         Self { arguments }
     }
+
+    ///That runs for add argument.
+    ///
+    ///If user not enter the password name to add database
+    ///it will get the password name from cli.
+    ///
+    ///If user use "help or example" run relevant functions.
     fn run(&mut self, connection: &sqlite::Connection) {
         if self.arguments.get_len() == 1 {
             self.arguments
@@ -66,6 +84,8 @@ impl args::Arguments for Add {
         );
     }
 
+    ///It checks for second argument.
+    ///Witch can be "help","example" or "PASSWORD-NAME".
     fn check_second_arg(&self) -> bool {
         let arg = self.arguments.arguments(2).unwrap();
         if arg == "--help" || arg == "-h" || arg == "-help" {
@@ -79,10 +99,13 @@ impl args::Arguments for Add {
         return false;
     }
 
+    ///Runs help for add password.
     fn help(&self) {
         print::add::print_add_help();
     }
 
+    ///Runs help function first
+    ///and runs example for add password.
     fn example(&self) {
         self.help();
         print::add::print_add_example();
