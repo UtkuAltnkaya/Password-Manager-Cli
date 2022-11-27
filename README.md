@@ -7,9 +7,9 @@ It is a command line interface for managing passwords
 ## Build Requirements
 
 - _Git_  
-  `https://git-scm.com/`
+  https://git-scm.com/
 - _Cargo_  
-  `https://www.rust-lang.org/tools/install`
+  https://www.rust-lang.org/tools/install
 
 ---
 
