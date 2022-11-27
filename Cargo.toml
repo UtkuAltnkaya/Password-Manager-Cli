@@ -2,8 +2,18 @@
 name = "password_manager"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description ="Cli for managing passwords"
+repository ="https://github.com/UtkuAltnkaya/Password-Manager-Cli"
+keywords = ["cli"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name ="pm"
+path ="src/bin/main.rs"
+
 [lib]
 name = "password_manager"
 path  ="src/lib/lib.rs"
