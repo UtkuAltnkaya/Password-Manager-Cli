@@ -6,7 +6,11 @@ use std::{
 use crossterm::style::Color;
 
 use super::args::Args;
-use crate::{helpers, models::args, print};
+use crate::{
+    helpers,
+    models::{args, password::Password},
+    print,
+};
 
 ///USAGE:
 ///pm env set
@@ -28,15 +32,37 @@ impl Env {
         let arg = self.arguments.arguments(2).unwrap().to_lowercase();
 
         if arg == "set" {
-            self.set_env_secret_key();
+            return self.set_env_secret_key();
         }
 
         if arg == "get" {
-            helpers::print_with_color_and_bold_line(
+            return helpers::print_with_color_and_bold_line(
                 Color::Yellow,
                 &std::env::var("SECRET_KEY").unwrap(),
             );
         }
+
+        if arg == "generate" {
+            return self.generate_secret_key();
+        }
+    }
+
+    ///It will generate new secret key
+    ///
+    /// Writes the secret key to the .env file
+    fn generate_secret_key(&self) {
+        let mut password = Password::new(&String::from("Hash"), 32);
+        password.generate_password().unwrap();
+        password.decrypt();
+        let password = password.get_password();
+
+        let confirm = helpers::confirm(Color::Red,
+        "After setting a secret key, all the password will delete and old secret key will not be access");
+        if !confirm {
+            return;
+        }
+        let path = helpers::exe_location();
+        fs::write(path + ".env", format!("SECRET_KEY=\"{}\"", password)).unwrap();
     }
 
     ///It sets new secret key to ".env" file
@@ -63,6 +89,7 @@ impl Env {
             if error.not_found() {
                 helpers::print_with_color_and_bold_line(Color::Red, ".env file not found");
                 if helpers::confirm(Color::Yellow, "Would you like to create env file") {
+                    println!();
                     Env::create_env_file(path);
                     return Env::read_from_env(path);
                 }
@@ -71,7 +98,6 @@ impl Env {
             helpers::print_with_color_and_bold_line(Color::Red, &error.to_string());
             std::process::exit(1);
         }
-        println!()
     }
 
     ///Checks the secret key that is stored in ".env" file

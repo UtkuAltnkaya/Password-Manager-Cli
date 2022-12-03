@@ -40,7 +40,7 @@ impl Args {
     ///If any argument is entered then it runs "help"
     pub fn run(self, connection: &sqlite::Connection) {
         if self.len == 0 {
-            return print::help::display_help();
+            return Menu::new().run(connection);
         }
         match self.arguments(1).unwrap().as_str() {
             "add" => Add::new(self.clone()).run(connection),

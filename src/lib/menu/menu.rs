@@ -34,6 +34,7 @@ impl Menu {
     pub fn run(&mut self, connection: &sqlite::Connection) {
         execute!(stdout(), MoveTo(0, 0), Clear(ClearType::FromCursorDown)).unwrap();
         self.show_menu_items();
+        execute!(stdout(), crossterm::cursor::Hide).unwrap();
         loop {
             let event = read().unwrap();
             if let Event::Key(keys) = event {
@@ -52,35 +53,48 @@ impl Menu {
 
     fn run_menu_item(&self, connection: &sqlite::Connection) {
         let mut args = Args::new();
-
+        let first_argument = args.arguments(1).unwrap_or_default();
+        execute!(stdout(), crossterm::cursor::Show).unwrap();
         match self.index {
             0 => {
-                args.replace_argument(1, String::from("add")).unwrap();
+                self.modify_first_argument(&mut args, String::from("add"), &first_argument);
                 Add::new(args).run(connection)
             }
             1 => {
-                args.replace_argument(1, String::from("show")).unwrap();
+                self.modify_first_argument(&mut args, String::from("show"), &first_argument);
                 Show::new(args).run(connection)
             }
             2 => {
-                args.replace_argument(1, String::from("list")).unwrap();
+                self.modify_first_argument(&mut args, String::from("list"), &first_argument);
                 list::lists_password(connection)
             }
             3 => {
-                args.replace_argument(1, String::from("update")).unwrap();
+                self.modify_first_argument(&mut args, String::from("update"), &first_argument);
                 Update::new(args).run(connection)
             }
             4 => {
-                args.replace_argument(1, String::from("delete")).unwrap();
+                self.modify_first_argument(&mut args, String::from("delete"), &first_argument);
                 Delete::new(args).run(connection)
             }
             5 => {
-                args.replace_argument(1, String::from("--help")).unwrap();
+                self.modify_first_argument(&mut args, String::from("--help"), &first_argument);
                 print::help::display_help()
             }
             6 => return,
-            _ => {}
+            _ => (),
         };
+    }
+
+    ///It modifies the first argument
+    ///
+    /// If user enter the menu and select the item and replace the first argument with proper one
+    ///
+    /// If user use only pm and select the item and add the first argument
+    fn modify_first_argument(&self, arguments: &mut Args, arg_name: String, first_args: &str) {
+        if first_args == "" {
+            return arguments.insert_arguments(1, arg_name).unwrap();
+        }
+        arguments.replace_argument(1, arg_name).unwrap();
     }
 
     fn key_up(&mut self) {
