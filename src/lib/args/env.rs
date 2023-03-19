@@ -25,9 +25,11 @@ pub struct Env {
 impl Env {
     ///It runs env
     ///
-    ///If it is set then run that function
+    ///If it is set then runs that function
     ///
     ///If it is get print the Key
+    ///
+    ///If it is generate then runs that function
     fn env_run(&self) {
         let arg = self.arguments.arguments(2).unwrap().to_lowercase();
 
